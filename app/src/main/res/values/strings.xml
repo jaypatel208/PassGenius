@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">PassGenius</string>
     <string name="passwords">Passwords</string>
+    <string name="password">Password</string>
+    <string name="strong">Strong</string>
+    <string name="mediocre">Mediocre</string>
+    <string name="search">Search</string>
+    <string name="home">Home</string>
 </resources>

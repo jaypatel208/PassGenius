@@ -4,7 +4,7 @@ import android.content.Context
 import java.io.IOException
 import kotlin.random.Random
 
-object Utility {
+object PasswordUtility {
     private val symbolList = listOf("#", "$", "%", "@", "!", "&", "*")
     fun readWordsFromFile(resourceId: Int, context: Context): List<String> = try {
         context.resources.openRawResource(resourceId).bufferedReader().useLines { lines ->
@@ -45,6 +45,4 @@ object Utility {
 
         return "$word1$symbol$word2$symbol$word3$symbol$number1$number2"
     }
-
-
 }
