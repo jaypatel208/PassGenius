@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
-import dev.jay.passgenius.ui.theme.White
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(White)
+                        .background(Color.White)
                 ) {
                     AppEntryPoint()
                 }

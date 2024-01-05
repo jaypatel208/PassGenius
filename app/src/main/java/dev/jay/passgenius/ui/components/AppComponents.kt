@@ -1,8 +1,9 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 package dev.jay.passgenius.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Airlines
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,10 +38,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
+import dev.jay.passgenius.models.CategoriesPasswordStoreModel
 import dev.jay.passgenius.ui.theme.OrangeMetrics
 import dev.jay.passgenius.utils.GeneralUtility
 
@@ -47,13 +51,13 @@ fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePa
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(screenHeight / 3)
-            .padding(top = 1.dp)
+            .height(screenHeight / 4)
     ) {
+        val roundCorners = screenHeight / 40
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(screenHeight / 30))
+                .clip(RoundedCornerShape(bottomStart = roundCorners, bottomEnd = roundCorners))
                 .background(OrangeMetrics)
                 .padding(18.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -81,7 +85,8 @@ fun TextTotalPasswords(text: String) {
         Text(
             text = text,
             fontSize = 65.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
 
         Text(
@@ -89,7 +94,8 @@ fun TextTotalPasswords(text: String) {
                 stringResource(id = R.string.password)
             else stringResource(id = R.string.passwords),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            color = Color.Black
         )
 
         NoTopRectangle(130)
@@ -106,13 +112,15 @@ fun TextPasswordStrength(count: String, label: String) {
         Text(
             text = count,
             fontSize = 45.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
 
         Text(
             text = label,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            color = Color.Black
         )
         NoTopRectangle(width = 90)
     }
@@ -165,37 +173,6 @@ fun TopBar() {
 }
 
 @Composable
-fun PasswordColumnItem() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .height(50.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end =12.dp)) {
-            SiteLogo()
-            Column(modifier = Modifier.padding(start = 24.dp)) {
-                Text(
-                    text = "Google.com",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "leohoward@gmail.com", maxLines = 1, color = Color.Gray)
-            }
-        }
-        Icon(
-            imageVector = Icons.Filled.MoreHoriz,
-            contentDescription = "More Password Column Item",
-            modifier = Modifier.padding(start = 12.dp, end = 8.dp)
-        )
-    }
-}
-
-@Composable
 private fun SiteLogo() {
     Box(contentAlignment = Alignment.Center) {
         Canvas(
@@ -209,7 +186,63 @@ private fun SiteLogo() {
 }
 
 @Composable
-@Preview
-fun PasswordColumnItemPreview() {
-    PasswordColumnItem()
+fun PasswordColumnItem(site: String, username: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(top = 12.dp)
+            .height(50.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 12.dp)) {
+            SiteLogo()
+            Column(modifier = Modifier.padding(start = 24.dp)) {
+                Text(
+                    text = site,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = username, maxLines = 1, color = Color.Gray)
+            }
+        }
+        Icon(
+            imageVector = Icons.Filled.MoreHoriz,
+            contentDescription = "More Password Options",
+            modifier = Modifier.padding(start = 12.dp, end = 8.dp),
+            tint = Color.Black
+        )
+    }
+}
+
+@Composable
+fun CategoryItem(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        modifier = modifier.fillMaxWidth(),
+        fontWeight = FontWeight.Bold,
+        color = Color.Black
+    )
+}
+
+@Composable
+fun PasswordsLazyColumn(
+    categoriesPasswordStoreModel: List<CategoriesPasswordStoreModel>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier) {
+        categoriesPasswordStoreModel.forEach { category ->
+            stickyHeader {
+                Surface(Modifier.fillParentMaxWidth()) {
+                    CategoryItem(text = category.alphabet, modifier = Modifier.padding(top = 8.dp))
+                }
+            }
+            items(category.items) { item ->
+                PasswordColumnItem(item.site, item.username)
+            }
+        }
+    }
 }

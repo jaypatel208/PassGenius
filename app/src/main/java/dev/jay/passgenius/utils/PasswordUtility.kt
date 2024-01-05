@@ -1,6 +1,8 @@
 package dev.jay.passgenius.utils
 
 import android.content.Context
+import dev.jay.passgenius.models.CategoriesPasswordStoreModel
+import dev.jay.passgenius.models.PasswordStoreModel
 import java.io.IOException
 import kotlin.random.Random
 
@@ -44,5 +46,25 @@ object PasswordUtility {
         val symbol = getRandomSymbolFromList(symbolList)
 
         return "$word1$symbol$word2$symbol$word3$symbol$number1$number2"
+    }
+
+    fun categorizePasswords(passwords: List<PasswordStoreModel>): List<CategoriesPasswordStoreModel> {
+        val categorizedMap = mutableMapOf<Char, MutableList<PasswordStoreModel>>()
+
+        for (password in passwords) {
+            val firstAlphabet = password.site.first().uppercaseChar()
+            categorizedMap.computeIfAbsent(firstAlphabet) { mutableListOf() }.add(password)
+        }
+
+        val sortedCategories = categorizedMap.entries.sortedBy { it.key }
+
+        val categoriesList = sortedCategories.map { entry ->
+            CategoriesPasswordStoreModel(
+                alphabet = entry.key.toString(),
+                items = entry.value.sortedBy { it.site }
+            )
+        }
+
+        return categoriesList
     }
 }

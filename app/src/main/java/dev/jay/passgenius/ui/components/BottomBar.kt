@@ -20,9 +20,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.jay.passgenius.ui.theme.OrangeMetrics
-import dev.jay.passgenius.ui.theme.White
 
 data class BottomNavigationItem(
     val title: String,
@@ -58,7 +58,7 @@ fun BottomBar() {
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
     }
-    NavigationBar(containerColor = White) {
+    NavigationBar(containerColor = Color.White) {
         Spacer(Modifier.weight(1f))
         bottomNavigationItems.forEachIndexed { index, bottomNavigationItem ->
             NavigationBarItem(
@@ -70,13 +70,13 @@ fun BottomBar() {
                             bottomNavigationItem.selectedIcon
                         else
                             bottomNavigationItem.unSelectedIcon,
-                        contentDescription = bottomNavigationItem.title
+                        contentDescription = bottomNavigationItem.title,
+                        tint = if (index == selectedItemIndex) OrangeMetrics else Color.Black
                     )
                 },
                 alwaysShowLabel = false,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = OrangeMetrics,
-                    indicatorColor = White
+                    indicatorColor = Color.White
                 )
             )
         }
