@@ -22,7 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Airlines
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -151,7 +153,7 @@ private fun NoTopRectangle(width: Int) {
 }
 
 @Composable
-fun TopBar() {
+fun HomeScreenTopBar() {
     TopAppBar(
         title = {
             Text(
@@ -244,5 +246,34 @@ fun PasswordsLazyColumn(
                 PasswordColumnItem(item.site, item.username)
             }
         }
+    }
+}
+
+@Composable
+fun PasswordGenerateScreenTopBar() {
+    TopAppBar(title = { }, actions = {
+        Text(text = "Generate Password", color = Color.Black)
+        Icon(
+            imageVector = Icons.Outlined.Security,
+            contentDescription = "Password Generate Screen",
+            modifier = Modifier.padding(end = 16.dp, start = 8.dp),
+            tint = Color.Black
+        )
+    }, navigationIcon = {
+        Icon(
+            imageVector = Icons.Outlined.ArrowBackIosNew,
+            contentDescription = "Back",
+            modifier = Modifier.padding(start = 16.dp),
+            tint = Color.Black
+        )
+    })
+}
+
+@Composable
+fun PasswordGenerateText(modifier: Modifier = Modifier,fontSize:Int) {
+    Column(modifier = modifier) {
+        Text(text = "Create", color = Color.Black, fontSize = fontSize.sp)
+        Text(text = "a solid password by", color = Color.Gray, fontSize = fontSize.sp)
+        Text(text = "choosing properties", color = Color.Gray, fontSize = fontSize.sp)
     }
 }

@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.jay.passgenius.TemporaryConstants
 import dev.jay.passgenius.ui.components.BottomBar
+import dev.jay.passgenius.ui.components.HomeScreenTopBar
 import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
-import dev.jay.passgenius.ui.components.TopBar
 import dev.jay.passgenius.ui.theme.OrangeMetrics
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
@@ -25,7 +25,7 @@ fun HomeScreen() {
     GeneralUtility.SetStatusBarColor(color = OrangeMetrics)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar() },
+        topBar = { HomeScreenTopBar() },
         bottomBar = { BottomBar() }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).background(Color.White)) {
             MetricsComponent(totalPasswords = "58", strongPasswords = "47", mediocrePasswords = "11")
