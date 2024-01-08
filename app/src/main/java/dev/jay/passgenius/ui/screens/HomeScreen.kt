@@ -15,14 +15,14 @@ import dev.jay.passgenius.ui.components.BottomBar
 import dev.jay.passgenius.ui.components.HomeScreenTopBar
 import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
-import dev.jay.passgenius.ui.theme.OrangeMetrics
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
 
 @Composable
 fun HomeScreen() {
     val passwords = PasswordUtility.categorizePasswords(TemporaryConstants.passwords)
-    GeneralUtility.SetStatusBarColor(color = OrangeMetrics)
+    GeneralUtility.SetStatusBarColor(color = OrangePrimary)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { HomeScreenTopBar() },

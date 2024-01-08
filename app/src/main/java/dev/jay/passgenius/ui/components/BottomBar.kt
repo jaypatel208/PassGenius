@@ -22,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import dev.jay.passgenius.ui.theme.OrangeMetrics
+import dev.jay.passgenius.ui.theme.OrangePrimary
 
 data class BottomNavigationItem(
     val title: String,
@@ -71,7 +71,7 @@ fun BottomBar() {
                         else
                             bottomNavigationItem.unSelectedIcon,
                         contentDescription = bottomNavigationItem.title,
-                        tint = if (index == selectedItemIndex) OrangeMetrics else Color.Black
+                        tint = if (index == selectedItemIndex) OrangePrimary else Color.Black
                     )
                 },
                 alwaysShowLabel = false,

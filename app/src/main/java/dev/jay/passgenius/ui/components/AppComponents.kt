@@ -10,42 +10,60 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Airlines
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Autorenew
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
 import dev.jay.passgenius.models.CategoriesPasswordStoreModel
-import dev.jay.passgenius.ui.theme.OrangeMetrics
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
+import kotlin.math.roundToInt
 
 @Composable
 fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePasswords: String) {
@@ -60,7 +78,7 @@ fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePa
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(bottomStart = roundCorners, bottomEnd = roundCorners))
-                .background(OrangeMetrics)
+                .background(OrangePrimary)
                 .padding(18.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -170,7 +188,7 @@ fun HomeScreenTopBar() {
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = OrangeMetrics)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = OrangePrimary)
     )
 }
 
@@ -270,10 +288,135 @@ fun PasswordGenerateScreenTopBar() {
 }
 
 @Composable
-fun PasswordGenerateText(modifier: Modifier = Modifier,fontSize:Int) {
+fun PasswordGenerateText(modifier: Modifier = Modifier, fontSize: Int) {
     Column(modifier = modifier) {
         Text(text = "Create", color = Color.Black, fontSize = fontSize.sp)
         Text(text = "a solid password by", color = Color.Gray, fontSize = fontSize.sp)
         Text(text = "choosing properties", color = Color.Gray, fontSize = fontSize.sp)
+    }
+}
+
+@Composable
+fun CharactersComponent(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Text(text = "Characters", fontSize = 16.sp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            var sliderPosition by remember { mutableFloatStateOf(0f) }
+            Text(
+                text = sliderPosition.toInt().toString(),
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
+            )
+            Slider(
+                value = sliderPosition,
+                onValueChange = { sliderPosition = it.roundToInt().toFloat() },
+                modifier = Modifier.padding(start = 100.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.Black,
+                    activeTrackColor = Color.Black,
+                    inactiveTrackColor = Color.Gray
+                ),
+                valueRange = 12f..22f,
+                steps = 10
+            )
+        }
+    }
+}
+
+@Composable
+fun AddCharacteristicsComponent(characteristicName: String, characteristicValue: Int, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Text(text = characteristicName, fontSize = 16.sp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = characteristicValue.toString(),
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
+            )
+            PlusMinusComponent()
+        }
+    }
+}
+
+@Composable
+private fun PlusMinusComponent() {
+    Row {
+        CircleShapeComponent(Icons.Outlined.Add, OrangePrimary, Color.Black)
+        Spacer(modifier = Modifier.width(12.dp))
+        CircleShapeComponent(Icons.Outlined.Remove, Color.Black, Color.White)
+    }
+}
+
+@Composable
+fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: Color) {
+    Column(
+        modifier = Modifier
+            .wrapContentSize(Alignment.Center)
+    ) {
+        Column(
+            modifier = Modifier
+                .size(30.dp)
+                .clip(CircleShape)
+                .background(boxColor),
+            verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(imageVector = imageVector, contentDescription = "Add", tint = iconColor)
+        }
+    }
+}
+
+@Composable
+fun PasswordShowComponent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.Black),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val text = "Te69Y:0!Wn8nmk"
+            val annotatedString = buildAnnotatedString {
+                for (char in text) {
+                    if (char.isDigit()) {
+                        withStyle(style = SpanStyle(color = OrangePrimary)) {
+                            append(char.toString())
+                        }
+                    } else {
+                        withStyle(style = SpanStyle(color = Color.White)) {
+                            append(char.toString())
+                        }
+                    }
+                }
+            }
+            Text(text = annotatedString, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(imageVector = Icons.Outlined.Autorenew, contentDescription = "Generate New Password", tint = Color.Gray)
+        }
+        Icon(
+            imageVector = Icons.Outlined.CheckCircle,
+            contentDescription = "Password Done",
+            tint = OrangePrimary,
+            modifier = Modifier.padding(end = 16.dp)
+        )
     }
 }
