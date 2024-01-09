@@ -31,7 +31,6 @@ import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,6 +56,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
@@ -268,11 +268,11 @@ fun PasswordsLazyColumn(
 }
 
 @Composable
-fun PasswordGenerateScreenTopBar() {
+fun PasswordGenerateScreenTopBar(title: String, icon: ImageVector) {
     TopAppBar(title = { }, actions = {
-        Text(text = "Generate Password", color = Color.Black)
+        Text(text = title, color = Color.Black)
         Icon(
-            imageVector = Icons.Outlined.Security,
+            imageVector = icon,
             contentDescription = "Password Generate Screen",
             modifier = Modifier.padding(end = 16.dp, start = 8.dp),
             tint = Color.Black
@@ -408,9 +408,19 @@ fun PasswordShowComponent() {
                     }
                 }
             }
-            Text(text = annotatedString, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp)
+            Text(
+                text = annotatedString,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 1.sp
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(imageVector = Icons.Outlined.Autorenew, contentDescription = "Generate New Password", tint = Color.Gray)
+            Icon(
+                imageVector = Icons.Outlined.Autorenew,
+                contentDescription = "Generate New Password",
+                tint = Color.Gray
+            )
         }
         Icon(
             imageVector = Icons.Outlined.CheckCircle,
@@ -419,4 +429,19 @@ fun PasswordShowComponent() {
             modifier = Modifier.padding(end = 16.dp)
         )
     }
+}
+
+@Composable
+fun PasswordChoiceText(modifier: Modifier = Modifier, fontSize: Int) {
+    Column(modifier = modifier) {
+        Text(text = "Secure Your World:", color = Color.Black, fontSize = fontSize.sp)
+        Text(text = "Pick Your", color = Color.Gray, fontSize = fontSize.sp)
+        Text(text = "Password Style", color = Color.Gray, fontSize = fontSize.sp)
+    }
+}
+
+@Preview
+@Composable
+fun PasswordChoiceCard() {
+
 }
