@@ -2,7 +2,9 @@ package dev.jay.passgenius.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AdsClick
@@ -12,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.jay.passgenius.ui.components.PasswordChoiceCard
 import dev.jay.passgenius.ui.components.PasswordChoiceText
 import dev.jay.passgenius.ui.components.PasswordGenerateScreenTopBar
 import dev.jay.passgenius.utils.GeneralUtility
 
+@Preview
 @Composable
 fun PasswordChoiceScreen() {
     GeneralUtility.SetStatusBarColor(color = Color.White)
@@ -30,9 +34,12 @@ fun PasswordChoiceScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .background(Color.White)
+                .background(Color.White),
         ) {
             PasswordChoiceText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
+            Spacer(modifier = Modifier.height(36.dp))
+            PasswordChoiceCard(modifier = Modifier.padding(16.dp))
+            PasswordChoiceCard(modifier = Modifier.padding(16.dp))
         }
     }
 }

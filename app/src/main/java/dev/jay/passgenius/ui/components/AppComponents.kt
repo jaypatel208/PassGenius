@@ -5,6 +5,7 @@ package dev.jay.passgenius.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -442,6 +443,16 @@ fun PasswordChoiceText(modifier: Modifier = Modifier, fontSize: Int) {
 
 @Preview
 @Composable
-fun PasswordChoiceCard() {
+fun PasswordChoiceCard(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .border(width = 3.dp, color = Color.Black,
+                shape = RoundedCornerShape(size = 30.dp))
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
 
+        }
+    }
 }
