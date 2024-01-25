@@ -6,6 +6,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +59,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
@@ -269,7 +270,7 @@ fun PasswordsLazyColumn(
 }
 
 @Composable
-fun PasswordGenerateScreenTopBar(title: String, icon: ImageVector) {
+fun PasswordGenerateScreenTopBar(title: String, icon: ImageVector, onBack: () -> Unit) {
     TopAppBar(title = { }, actions = {
         Text(text = title, color = Color.Black)
         Icon(
@@ -279,10 +280,13 @@ fun PasswordGenerateScreenTopBar(title: String, icon: ImageVector) {
             tint = Color.Black
         )
     }, navigationIcon = {
+        val interactionSource = remember { MutableInteractionSource() }
         Icon(
             imageVector = Icons.Outlined.ArrowBackIosNew,
             contentDescription = "Back",
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .clickable(onClick = onBack, indication = null, interactionSource = interactionSource),
             tint = Color.Black
         )
     })
@@ -441,18 +445,23 @@ fun PasswordChoiceText(modifier: Modifier = Modifier, fontSize: Int) {
     }
 }
 
-@Preview
 @Composable
-fun PasswordChoiceCard(modifier: Modifier = Modifier) {
+fun PasswordChoiceCard(modifier: Modifier = Modifier, title: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(150.dp)
-            .border(width = 3.dp, color = Color.Black,
-                shape = RoundedCornerShape(size = 30.dp))
+            .border(
+                width = 3.dp, color = Color.Black,
+                shape = RoundedCornerShape(size = 30.dp)
+            )
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = title, color = Color.Black, fontSize = 28.sp)
         }
     }
 }

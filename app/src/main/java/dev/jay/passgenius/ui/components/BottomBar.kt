@@ -22,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import dev.jay.passgenius.ui.theme.OrangePrimary
 
 data class BottomNavigationItem(
@@ -54,7 +56,7 @@ val bottomNavigationItems = listOf(
 )
 
 @Composable
-fun BottomBar() {
+fun BottomBar(navController: NavController) {
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
     }
@@ -63,7 +65,16 @@ fun BottomBar() {
         bottomNavigationItems.forEachIndexed { index, bottomNavigationItem ->
             NavigationBarItem(
                 selected = selectedItemIndex == index,
-                onClick = { selectedItemIndex = index },
+                onClick = {
+                    selectedItemIndex = index
+                    navController.navigate(bottomNavigationItem.title.lowercase()) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 icon = {
                     Icon(
                         imageVector = if (index == selectedItemIndex)
