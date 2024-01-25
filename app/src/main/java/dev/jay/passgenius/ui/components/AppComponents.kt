@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -275,19 +276,20 @@ fun PasswordGenerateScreenTopBar(title: String, icon: ImageVector, onBack: () ->
         Text(text = title, color = Color.Black)
         Icon(
             imageVector = icon,
-            contentDescription = "Password Generate Screen",
+            contentDescription = title,
             modifier = Modifier.padding(end = 16.dp, start = 8.dp),
             tint = Color.Black
         )
     }, navigationIcon = {
         val interactionSource = remember { MutableInteractionSource() }
+        val isPressed by interactionSource.collectIsPressedAsState()
         Icon(
             imageVector = Icons.Outlined.ArrowBackIosNew,
             contentDescription = "Back",
             modifier = Modifier
                 .padding(start = 16.dp)
                 .clickable(onClick = onBack, indication = null, interactionSource = interactionSource),
-            tint = Color.Black
+            tint = if (isPressed) OrangePrimary else Color.Black
         )
     })
 }
@@ -446,22 +448,25 @@ fun PasswordChoiceText(modifier: Modifier = Modifier, fontSize: Int) {
 }
 
 @Composable
-fun PasswordChoiceCard(modifier: Modifier = Modifier, title: String) {
+fun PasswordChoiceCard(modifier: Modifier = Modifier, title: String, choiceClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(150.dp)
             .border(
-                width = 3.dp, color = Color.Black,
+                width = 3.dp, color = if (isPressed) OrangePrimary else Color.Black,
                 shape = RoundedCornerShape(size = 30.dp)
             )
+            .clickable(enabled = true, onClick = choiceClick, interactionSource = interactionSource, indication = null)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = title, color = Color.Black, fontSize = 28.sp)
+            Text(text = title, color = if (isPressed) OrangePrimary else Color.Black, fontSize = 28.sp)
         }
     }
 }

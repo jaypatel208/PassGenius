@@ -7,5 +7,9 @@
     <string name="search">Search</string>
     <string name="home">Home</string>
     <string name="robust_security">Robust Security</string>
+    <string name="security_audit">Security Audit</string>
+    <string name="settings">Settings</string>
     <string name="memorable_strength">Memorable Strength</string>
+    <string name="robust_password_generate">Robust Password Generate</string>
+    <string name="memorable_password_generate">Memorable Password Generate</string>
 </resources>

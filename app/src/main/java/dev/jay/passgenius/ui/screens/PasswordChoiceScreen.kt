@@ -12,28 +12,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import dev.jay.passgenius.R
 import dev.jay.passgenius.ui.components.PasswordChoiceCard
 import dev.jay.passgenius.ui.components.PasswordChoiceText
+import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.utils.GeneralUtility
 
 @Composable
-fun PasswordChoiceScreen(innerPadding: PaddingValues, onBack: () -> Unit) {
+fun PasswordChoiceScreen(innerPadding: PaddingValues, onBack: () -> Unit, navController: NavController) {
     GeneralUtility.SetStatusBarColor(color = Color.White)
     Column(
         modifier = Modifier
             .padding(innerPadding)
             .background(Color.White),
     ) {
+        val robustChoiceClick: () -> Unit = {
+            navController.navigate(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE)
+        }
+
+        val memorableChoiceClick: () -> Unit = {
+            navController.navigate(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE)
+        }
         PasswordChoiceText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
         Spacer(modifier = Modifier.height(36.dp))
         PasswordChoiceCard(
             modifier = Modifier.padding(16.dp),
-            title = stringResource(id = R.string.robust_security)
+            title = stringResource(id = R.string.robust_security),
+            choiceClick = robustChoiceClick
         )
         PasswordChoiceCard(
             modifier = Modifier.padding(16.dp),
-            title = stringResource(id = R.string.memorable_strength)
+            title = stringResource(id = R.string.memorable_strength),
+            choiceClick = memorableChoiceClick
         )
     }
     BackHandler(enabled = true, onBack = onBack)

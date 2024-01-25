@@ -7,7 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.jay.passgenius.ui.screens.HomeScreen
+import dev.jay.passgenius.ui.screens.MemorablePasswordGenerateScreen
 import dev.jay.passgenius.ui.screens.PasswordChoiceScreen
+import dev.jay.passgenius.ui.screens.RobustPasswordGenerateScreen
 import dev.jay.passgenius.ui.screens.SecurityAuditScreen
 import dev.jay.passgenius.ui.screens.SettingsScreen
 
@@ -26,7 +28,7 @@ fun AppNavigationGraph(
             showBottomBar.value = true
         }
         composable(Routes.PASSWORD_GENERATE) {
-            PasswordChoiceScreen(innerPadding, onBack)
+            PasswordChoiceScreen(innerPadding, onBack, navHostController)
             currentScreen.value = Routes.PASSWORD_GENERATE
             showBottomBar.value = true
         }
@@ -38,6 +40,16 @@ fun AppNavigationGraph(
         composable(Routes.SETTINGS) {
             SettingsScreen()
             currentScreen.value = Routes.SETTINGS
+            showBottomBar.value = false
+        }
+        composable(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE) {
+            RobustPasswordGenerateScreen(innerPadding = innerPadding)
+            currentScreen.value = Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE
+            showBottomBar.value = false
+        }
+        composable(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE) {
+            MemorablePasswordGenerateScreen()
+            currentScreen.value = Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE
             showBottomBar.value = false
         }
     }

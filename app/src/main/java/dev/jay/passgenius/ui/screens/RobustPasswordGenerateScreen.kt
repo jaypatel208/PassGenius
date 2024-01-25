@@ -17,7 +17,7 @@ import dev.jay.passgenius.ui.components.PasswordShowComponent
 import dev.jay.passgenius.utils.GeneralUtility
 
 @Composable
-fun PasswordGenerateScreen(innerPadding: PaddingValues) {
+fun RobustPasswordGenerateScreen(innerPadding: PaddingValues) {
     GeneralUtility.SetStatusBarColor(color = Color.White)
     Column(
         modifier = Modifier
