@@ -10,14 +10,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.CharactersComponent
 import dev.jay.passgenius.ui.components.PasswordGenerateText
 import dev.jay.passgenius.ui.components.PasswordShowComponent
 import dev.jay.passgenius.utils.GeneralUtility
+import dev.jay.passgenius.viewmodel.RobustPasswordViewModel
 
 @Composable
-fun RobustPasswordGenerateScreen(innerPadding: PaddingValues) {
+fun RobustPasswordGenerateScreen(
+    innerPadding: PaddingValues,
+    robustPasswordViewModel: RobustPasswordViewModel = hiltViewModel()
+) {
     GeneralUtility.SetStatusBarColor(color = Color.White)
     Column(
         modifier = Modifier
@@ -26,14 +31,35 @@ fun RobustPasswordGenerateScreen(innerPadding: PaddingValues) {
     ) {
         PasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
         Spacer(modifier = Modifier.height(50.dp))
-        CharactersComponent()
+        CharactersComponent(initialLengthValue = robustPasswordViewModel.lengthValue.value) { newLengthValue ->
+            robustPasswordViewModel.updateLengthValue(newLengthValue)
+        }
         Spacer(modifier = Modifier.height(30.dp))
-        AddCharacteristicsComponent(characteristicName = "Digits", characteristicValue = 3)
+        AddCharacteristicsComponent(
+            characteristicName = "Digits", maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            initialCharacteristicValue = robustPasswordViewModel.digitsValue.value
+        ) { newDigitValue ->
+            robustPasswordViewModel.updateDigitsValue(newDigitValue)
+        }
         Spacer(modifier = Modifier.height(30.dp))
-        AddCharacteristicsComponent(characteristicName = "Capitals", characteristicValue = 8)
+        AddCharacteristicsComponent(
+            characteristicName = "Capitals",
+            maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            initialCharacteristicValue = robustPasswordViewModel.capitalValue.value
+        ) { newCapitalsValue ->
+            robustPasswordViewModel.updateCapitalValue(newCapitalsValue)
+        }
         Spacer(modifier = Modifier.height(30.dp))
-        AddCharacteristicsComponent(characteristicName = "Symbols", characteristicValue = 2)
+        AddCharacteristicsComponent(
+            characteristicName = "Symbols",
+            maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            initialCharacteristicValue = robustPasswordViewModel.symbolsValue.value
+        ) { newSymbolsValue ->
+            robustPasswordViewModel.updateSymbolsValue(newSymbolsValue)
+        }
         Spacer(modifier = Modifier.height(50.dp))
-        PasswordShowComponent()
+        PasswordShowComponent(robustPasswordViewModel.generatePassword()) {
+            robustPasswordViewModel.generatePassword()
+        }
     }
 }

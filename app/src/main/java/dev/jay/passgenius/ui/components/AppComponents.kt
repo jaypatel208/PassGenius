@@ -47,6 +47,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -304,7 +305,7 @@ fun PasswordGenerateText(modifier: Modifier = Modifier, fontSize: Int) {
 }
 
 @Composable
-fun CharactersComponent(modifier: Modifier = Modifier) {
+fun CharactersComponent(modifier: Modifier = Modifier, initialLengthValue: Float, onValueChanged: (Float) -> Unit) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -312,7 +313,7 @@ fun CharactersComponent(modifier: Modifier = Modifier) {
     ) {
         Text(text = "Characters", fontSize = 16.sp)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            var sliderPosition by remember { mutableFloatStateOf(0f) }
+            var sliderPosition by remember { mutableFloatStateOf(initialLengthValue) }
             Text(
                 text = sliderPosition.toInt().toString(),
                 fontSize = 28.sp,
@@ -321,7 +322,10 @@ fun CharactersComponent(modifier: Modifier = Modifier) {
             )
             Slider(
                 value = sliderPosition,
-                onValueChange = { sliderPosition = it.roundToInt().toFloat() },
+                onValueChange = {
+                    sliderPosition = it.roundToInt().toFloat()
+                    onValueChanged(sliderPosition)
+                },
                 modifier = Modifier.padding(start = 100.dp),
                 colors = SliderDefaults.colors(
                     thumbColor = Color.Black,
@@ -336,7 +340,14 @@ fun CharactersComponent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddCharacteristicsComponent(characteristicName: String, characteristicValue: Int, modifier: Modifier = Modifier) {
+fun AddCharacteristicsComponent(
+    characteristicName: String,
+    initialCharacteristicValue: Int,
+    maxCharacteristicValue: Int,
+    modifier: Modifier = Modifier,
+    onValueChanged: (Int) -> Unit
+) {
+    var internalCharacteristicValue by remember { mutableStateOf(initialCharacteristicValue) }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -349,27 +360,49 @@ fun AddCharacteristicsComponent(characteristicName: String, characteristicValue:
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = characteristicValue.toString(),
+                text = internalCharacteristicValue.toString(),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray
             )
-            PlusMinusComponent()
+            PlusMinusComponent(
+                onIncrement = {
+                    if (maxCharacteristicValue != 0) {
+                        internalCharacteristicValue++
+                        onValueChanged(internalCharacteristicValue)
+                    }
+                },
+                onDecrement = {
+                    if (internalCharacteristicValue > 1) {
+                        internalCharacteristicValue--
+                        onValueChanged(internalCharacteristicValue)
+                    }
+                })
         }
     }
 }
 
 @Composable
-private fun PlusMinusComponent() {
+private fun PlusMinusComponent(onIncrement: () -> Unit, onDecrement: () -> Unit) {
     Row {
-        CircleShapeComponent(Icons.Outlined.Add, OrangePrimary, Color.Black)
+        CircleShapeComponent(
+            imageVector = Icons.Outlined.Add,
+            boxColor = OrangePrimary,
+            iconColor = Color.Black,
+            onClick = onIncrement
+        )
         Spacer(modifier = Modifier.width(12.dp))
-        CircleShapeComponent(Icons.Outlined.Remove, Color.Black, Color.White)
+        CircleShapeComponent(
+            imageVector = Icons.Outlined.Remove,
+            boxColor = Color.Black,
+            iconColor = Color.White,
+            onClick = onDecrement
+        )
     }
 }
 
 @Composable
-fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: Color) {
+fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: Color, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
@@ -378,7 +411,8 @@ fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: C
             modifier = Modifier
                 .size(30.dp)
                 .clip(CircleShape)
-                .background(boxColor),
+                .background(boxColor)
+                .clickable { onClick() },
             verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(imageVector = imageVector, contentDescription = "Add", tint = iconColor)
@@ -387,7 +421,7 @@ fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: C
 }
 
 @Composable
-fun PasswordShowComponent() {
+fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -401,9 +435,10 @@ fun PasswordShowComponent() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val text = "Te69Y:0!Wn8nmk"
+            val interactionSource = remember { MutableInteractionSource() }
+            val isPressed by interactionSource.collectIsPressedAsState()
             val annotatedString = buildAnnotatedString {
-                for (char in text) {
+                for (char in generatedPassword) {
                     if (char.isDigit()) {
                         withStyle(style = SpanStyle(color = OrangePrimary)) {
                             append(char.toString())
@@ -425,8 +460,13 @@ fun PasswordShowComponent() {
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 imageVector = Icons.Outlined.Autorenew,
-                contentDescription = "Generate New Password",
-                tint = Color.Gray
+                contentDescription = "ReGenerate Password",
+                tint = if (isPressed) OrangePrimary else Color.Gray,
+                modifier = Modifier.clickable(
+                    onClick = onRegenerate,
+                    indication = null,
+                    interactionSource = interactionSource
+                )
             )
         }
         Icon(

@@ -40,7 +40,7 @@ fun AppNavigationGraph(
         composable(Routes.SETTINGS) {
             SettingsScreen()
             currentScreen.value = Routes.SETTINGS
-            showBottomBar.value = false
+            showBottomBar.value = true
         }
         composable(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE) {
             RobustPasswordGenerateScreen(innerPadding = innerPadding)
