@@ -12,4 +12,7 @@
     <string name="memorable_strength">Memorable Strength</string>
     <string name="robust_password_generate">Robust Password Generate</string>
     <string name="memorable_password_generate">Memorable Password Generate</string>
+    <string name="digits">Digits</string>
+    <string name="capitals">Capitals</string>
+    <string name="symbols">Symbols</string>
 </resources>

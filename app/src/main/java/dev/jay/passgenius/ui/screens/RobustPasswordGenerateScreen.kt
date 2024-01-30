@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.jay.passgenius.R
 import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.CharactersComponent
 import dev.jay.passgenius.ui.components.PasswordGenerateText
@@ -36,30 +38,31 @@ fun RobustPasswordGenerateScreen(
         }
         Spacer(modifier = Modifier.height(30.dp))
         AddCharacteristicsComponent(
-            characteristicName = "Digits", maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            characteristicName = stringResource(id = R.string.digits),
+            maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
             initialCharacteristicValue = robustPasswordViewModel.digitsValue.value
         ) { newDigitValue ->
             robustPasswordViewModel.updateDigitsValue(newDigitValue)
         }
         Spacer(modifier = Modifier.height(30.dp))
         AddCharacteristicsComponent(
-            characteristicName = "Capitals",
-            maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            characteristicName = stringResource(id = R.string.capitals),
+            maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
             initialCharacteristicValue = robustPasswordViewModel.capitalValue.value
         ) { newCapitalsValue ->
             robustPasswordViewModel.updateCapitalValue(newCapitalsValue)
         }
         Spacer(modifier = Modifier.height(30.dp))
         AddCharacteristicsComponent(
-            characteristicName = "Symbols",
-            maxCharacteristicValue = robustPasswordViewModel.getMaxCharacteristicValue(),
+            characteristicName = stringResource(id = R.string.symbols),
+            maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
             initialCharacteristicValue = robustPasswordViewModel.symbolsValue.value
         ) { newSymbolsValue ->
             robustPasswordViewModel.updateSymbolsValue(newSymbolsValue)
         }
         Spacer(modifier = Modifier.height(50.dp))
-        PasswordShowComponent(robustPasswordViewModel.generatePassword()) {
-            robustPasswordViewModel.generatePassword()
+        PasswordShowComponent(robustPasswordViewModel.generatedPassword.value) {
+            robustPasswordViewModel.regeneratePassword()
         }
     }
 }
