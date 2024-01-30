@@ -2,6 +2,9 @@
 
 package dev.jay.passgenius.ui.components
 
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,13 +31,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Airlines
+import androidx.compose.material.icons.filled.CopyAll
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,7 +62,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -421,7 +431,7 @@ fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: C
 }
 
 @Composable
-fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit) {
+fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit, onDone: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -437,19 +447,7 @@ fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit) {
         ) {
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
-            val annotatedString = buildAnnotatedString {
-                for (char in generatedPassword) {
-                    if (char.isDigit()) {
-                        withStyle(style = SpanStyle(color = OrangePrimary)) {
-                            append(char.toString())
-                        }
-                    } else {
-                        withStyle(style = SpanStyle(color = Color.White)) {
-                            append(char.toString())
-                        }
-                    }
-                }
-            }
+            val annotatedString = annotatedString(generatedPassword, OrangePrimary, Color.White)
             Text(
                 text = annotatedString,
                 color = Color.White,
@@ -473,8 +471,25 @@ fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit) {
             imageVector = Icons.Outlined.CheckCircle,
             contentDescription = "Password Done",
             tint = OrangePrimary,
-            modifier = Modifier.padding(end = 16.dp)
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .clickable { onDone() }
         )
+    }
+}
+
+@Composable
+private fun annotatedString(generatedPassword: String, colorDigit: Color, colorText: Color) = buildAnnotatedString {
+    for (char in generatedPassword) {
+        if (char.isDigit()) {
+            withStyle(style = SpanStyle(color = colorDigit)) {
+                append(char.toString())
+            }
+        } else {
+            withStyle(style = SpanStyle(color = colorText)) {
+                append(char.toString())
+            }
+        }
     }
 }
 
@@ -507,6 +522,75 @@ fun PasswordChoiceCard(modifier: Modifier = Modifier, title: String, choiceClick
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = title, color = if (isPressed) OrangePrimary else Color.Black, fontSize = 28.sp)
+        }
+    }
+}
+
+@Composable
+fun CopyAndSaveCard(generatedPassword: String, context: Context) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 42.dp),
+        border = BorderStroke(5.dp, OrangePrimary),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = 50.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val annotatedString = annotatedString(
+                    generatedPassword = generatedPassword,
+                    colorDigit = OrangePrimary,
+                    colorText = Color.Black
+                )
+                Text(
+                    text = annotatedString,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Row {
+                    val interactionSourceCopy = remember { MutableInteractionSource() }
+                    val isPressedCopy by interactionSourceCopy.collectIsPressedAsState()
+                    val interactionSourceSave = remember { MutableInteractionSource() }
+                    val isPressedSave by interactionSourceSave.collectIsPressedAsState()
+                    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+                    Icon(
+                        imageVector = Icons.Filled.CopyAll,
+                        modifier = Modifier.clickable(
+                            interactionSource = interactionSourceCopy,
+                            indication = null,
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(generatedPassword))
+                                Toast.makeText(context, "Password copied to clipboard", Toast.LENGTH_LONG)
+                                    .show()
+                            }
+                        ),
+                        contentDescription = "Copy password",
+                        tint = if (isPressedCopy) OrangePrimary else Color.Black
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Save,
+                        contentDescription = "Save password",
+                        modifier = Modifier.clickable(
+                            interactionSource = interactionSourceSave,
+                            indication = null,
+                            onClick = {
+                            }
+                        ),
+                        tint = if (isPressedSave) OrangePrimary else Color.Black
+                    )
+                }
+            }
         }
     }
 }

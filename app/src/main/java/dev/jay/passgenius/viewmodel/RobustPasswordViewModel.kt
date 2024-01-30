@@ -16,11 +16,13 @@ class RobustPasswordViewModel @Inject constructor(private val robustPasswordUseC
     private val _capitalValue = mutableStateOf(3)
     private val _symbolsValue = mutableStateOf(2)
     private val _lengthValue = mutableStateOf(12f)
+    private val _showCopyAndSaveCard = mutableStateOf(false)
 
     val digitsValue: State<Int> = _digitsValue
     val capitalValue: State<Int> = _capitalValue
     val symbolsValue: State<Int> = _symbolsValue
     val lengthValue: State<Float> = _lengthValue
+    val showCopyAndSaveCard: State<Boolean> = _showCopyAndSaveCard
 
     val maxCharacteristicValue: State<Int> = derivedStateOf {
         (
@@ -63,5 +65,9 @@ class RobustPasswordViewModel @Inject constructor(private val robustPasswordUseC
 
     fun updateSymbolsValue(newSymbolsValue: Int) {
         _symbolsValue.value = newSymbolsValue
+    }
+
+    fun updateShowCopyAndSaveCard(newShowCopyAndSaveCard: Boolean) {
+        _showCopyAndSaveCard.value = newShowCopyAndSaveCard
     }
 }
