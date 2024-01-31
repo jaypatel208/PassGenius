@@ -1,4 +1,4 @@
-package dev.jay.passgenius.models
+package dev.jay.passgenius.di.models
 
 data class PasswordStoreModel(
     val id: Int,

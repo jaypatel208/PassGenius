@@ -1,4 +1,4 @@
-package dev.jay.passgenius
+package dev.jay.passgenius.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.jay.passgenius.R
 import dev.jay.passgenius.ui.components.BottomBar
 import dev.jay.passgenius.ui.components.HomeScreenTopBar
 import dev.jay.passgenius.ui.components.PasswordGenerateScreenTopBar

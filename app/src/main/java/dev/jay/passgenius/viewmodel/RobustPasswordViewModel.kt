@@ -5,11 +5,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.jay.passgenius.database.PasswordModel
 import dev.jay.passgenius.usecase.RobustPasswordUseCase
+import dev.jay.passgenius.usecase.SavePasswordUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class RobustPasswordViewModel @Inject constructor(private val robustPasswordUseCase: RobustPasswordUseCase) :
+class RobustPasswordViewModel @Inject constructor(
+    private val robustPasswordUseCase: RobustPasswordUseCase,
+    private val savePasswordUseCase: SavePasswordUseCase
+) :
     ViewModel() {
 
     private val _digitsValue = mutableStateOf(3)
@@ -17,12 +22,14 @@ class RobustPasswordViewModel @Inject constructor(private val robustPasswordUseC
     private val _symbolsValue = mutableStateOf(2)
     private val _lengthValue = mutableStateOf(12f)
     private val _showCopyAndSaveCard = mutableStateOf(false)
+    private val _showSavePasswordCard = mutableStateOf(false)
 
     val digitsValue: State<Int> = _digitsValue
     val capitalValue: State<Int> = _capitalValue
     val symbolsValue: State<Int> = _symbolsValue
     val lengthValue: State<Float> = _lengthValue
     val showCopyAndSaveCard: State<Boolean> = _showCopyAndSaveCard
+    val showSavePasswordCard: State<Boolean> = _showSavePasswordCard
 
     val maxCharacteristicValue: State<Int> = derivedStateOf {
         (
@@ -69,5 +76,13 @@ class RobustPasswordViewModel @Inject constructor(private val robustPasswordUseC
 
     fun updateShowCopyAndSaveCard(newShowCopyAndSaveCard: Boolean) {
         _showCopyAndSaveCard.value = newShowCopyAndSaveCard
+    }
+
+    fun savePassword(passwordModel: PasswordModel) {
+        savePasswordUseCase.savePassword(passwordModel)
+    }
+
+    fun updateShowSavePasswordCard(newShowSavePasswordCard: Boolean) {
+        _showSavePasswordCard.value = newShowSavePasswordCard
     }
 }

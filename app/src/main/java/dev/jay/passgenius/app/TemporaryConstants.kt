@@ -1,6 +1,6 @@
-package dev.jay.passgenius
+package dev.jay.passgenius.app
 
-import dev.jay.passgenius.models.PasswordStoreModel
+import dev.jay.passgenius.di.models.PasswordStoreModel
 
 object TemporaryConstants {
     val passwords = listOf(

@@ -1,4 +1,4 @@
-package dev.jay.passgenius.ui.screens
+package dev.jay.passgenius.view.screens
 
 import androidx.compose.runtime.Composable
 

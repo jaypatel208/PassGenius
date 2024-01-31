@@ -45,6 +45,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
@@ -67,6 +71,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,7 +79,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
-import dev.jay.passgenius.models.CategoriesPasswordStoreModel
+import dev.jay.passgenius.di.models.CategoriesPasswordStoreModel
 import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
 import kotlin.math.roundToInt
@@ -527,7 +532,7 @@ fun PasswordChoiceCard(modifier: Modifier = Modifier, title: String, choiceClick
 }
 
 @Composable
-fun CopyAndSaveCard(generatedPassword: String, context: Context) {
+fun CopyAndSaveCard(generatedPassword: String, context: Context, onSavePassword: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -585,11 +590,116 @@ fun CopyAndSaveCard(generatedPassword: String, context: Context) {
                             interactionSource = interactionSourceSave,
                             indication = null,
                             onClick = {
+                                onSavePassword()
                             }
                         ),
                         tint = if (isPressedSave) OrangePrimary else Color.Black
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SavePasswordCard(
+    generatedPassword: String,
+    onSavePassword: (siteName: String, userName: String, generatedPassword: String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 42.dp),
+        border = BorderStroke(5.dp, OrangePrimary),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 25.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            var siteName by remember { mutableStateOf("") }
+            var userName by remember { mutableStateOf("") }
+            var isErrorInSiteName by remember { mutableStateOf(false) }
+            val limitChar = 30
+
+            fun validateSiteName(text: String) {
+                isErrorInSiteName = text.isBlank()
+            }
+
+            OutlinedTextField(
+                value = siteName,
+                onValueChange = {
+                    siteName = it.take(limitChar)
+                    validateSiteName(siteName)
+                },
+                placeholder = { Text(stringResource(id = R.string.site), color = OrangePrimary) },
+                textStyle = TextStyle(color = OrangePrimary),
+                isError = isErrorInSiteName,
+                supportingText = {
+                    if (isErrorInSiteName) {
+                        Text(
+                            text = stringResource(id = R.string.blank_site_name),
+                            modifier = Modifier.padding(end = 40.dp),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = OrangePrimary,
+                    focusedBorderColor = OrangePrimary,
+                    cursorColor = OrangePrimary
+                ),
+                modifier = Modifier.padding(horizontal = 12.dp),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            OutlinedTextField(
+                value = userName,
+                onValueChange = { userName = it.take(limitChar) },
+                placeholder = { Text(stringResource(id = R.string.username), color = OrangePrimary) },
+                textStyle = TextStyle(color = OrangePrimary),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = OrangePrimary,
+                    focusedBorderColor = OrangePrimary,
+                    cursorColor = OrangePrimary
+                ),
+                modifier = Modifier.padding(horizontal = 12.dp),
+                singleLine = true
+            )
+            val annotatedString = annotatedString(
+                generatedPassword = generatedPassword,
+                colorDigit = OrangePrimary,
+                colorText = Color.Black
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            Text(
+                text = annotatedString,
+                color = Color.Black,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 1.sp
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            OutlinedButton(
+                onClick = {
+                    validateSiteName(siteName)
+                    if (!isErrorInSiteName) onSavePassword(
+                        siteName,
+                        userName,
+                        generatedPassword
+                    )
+                },
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = OrangePrimary
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.save),
+                    color = OrangePrimary
+                )
             }
         }
     }

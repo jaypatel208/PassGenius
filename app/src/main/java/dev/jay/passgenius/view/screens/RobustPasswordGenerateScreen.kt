@@ -1,4 +1,4 @@
-package dev.jay.passgenius.ui.screens
+package dev.jay.passgenius.view.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,11 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.jay.passgenius.R
+import dev.jay.passgenius.database.PasswordModel
 import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.CharactersComponent
 import dev.jay.passgenius.ui.components.CopyAndSaveCard
 import dev.jay.passgenius.ui.components.PasswordGenerateText
 import dev.jay.passgenius.ui.components.PasswordShowComponent
+import dev.jay.passgenius.ui.components.SavePasswordCard
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.viewmodel.RobustPasswordViewModel
 
@@ -42,7 +44,7 @@ fun RobustPasswordGenerateScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(Color.White)
-                .blur(if (robustPasswordViewModel.showCopyAndSaveCard.value) 7.dp else 0.dp)
+                .blur(if (robustPasswordViewModel.showCopyAndSaveCard.value || robustPasswordViewModel.showSavePasswordCard.value) 7.dp else 0.dp)
                 .clickable(onClick = {
                     if (robustPasswordViewModel.showCopyAndSaveCard.value) robustPasswordViewModel.updateShowCopyAndSaveCard(
                         false
@@ -87,8 +89,25 @@ fun RobustPasswordGenerateScreen(
         }
         if (robustPasswordViewModel.showCopyAndSaveCard.value) {
             CopyAndSaveCard(
-                generatedPassword = robustPasswordViewModel.generatedPassword.value, context = LocalContext.current
+                generatedPassword = robustPasswordViewModel.generatedPassword.value,
+                context = LocalContext.current,
+                onSavePassword = {
+                    robustPasswordViewModel.updateShowCopyAndSaveCard(
+                        false
+                    )
+                    robustPasswordViewModel.updateShowSavePasswordCard(true)
+                }
             )
+        }
+        if (robustPasswordViewModel.showSavePasswordCard.value) {
+            SavePasswordCard(
+                generatedPassword = robustPasswordViewModel.generatedPassword.value,
+                onSavePassword = { siteName, userName, generatedPassword ->
+                    robustPasswordViewModel.savePassword(
+                        PasswordModel(id = 0, site = siteName, username = userName, password = generatedPassword)
+                    )
+                    robustPasswordViewModel.updateShowSavePasswordCard(false)
+                })
         }
     }
 }

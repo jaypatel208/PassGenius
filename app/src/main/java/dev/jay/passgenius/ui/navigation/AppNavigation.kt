@@ -6,12 +6,12 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.jay.passgenius.ui.screens.HomeScreen
-import dev.jay.passgenius.ui.screens.MemorablePasswordGenerateScreen
-import dev.jay.passgenius.ui.screens.PasswordChoiceScreen
-import dev.jay.passgenius.ui.screens.RobustPasswordGenerateScreen
-import dev.jay.passgenius.ui.screens.SecurityAuditScreen
-import dev.jay.passgenius.ui.screens.SettingsScreen
+import dev.jay.passgenius.view.screens.HomeScreen
+import dev.jay.passgenius.view.screens.MemorablePasswordGenerateScreen
+import dev.jay.passgenius.view.screens.PasswordChoiceScreen
+import dev.jay.passgenius.view.screens.RobustPasswordGenerateScreen
+import dev.jay.passgenius.view.screens.SecurityAuditScreen
+import dev.jay.passgenius.view.screens.SettingsScreen
 
 @Composable
 fun AppNavigationGraph(

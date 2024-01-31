@@ -15,4 +15,8 @@
     <string name="digits">Digits</string>
     <string name="capitals">Capitals</string>
     <string name="symbols">Symbols</string>
+    <string name="save">Save</string>
+    <string name="site">Site</string>
+    <string name="username">Username</string>
+    <string name="blank_site_name">Empty site name prevents learning more about the password.</string>
 </resources>

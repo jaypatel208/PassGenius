@@ -1,4 +1,4 @@
-package dev.jay.passgenius.ui.screens
+package dev.jay.passgenius.view.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.jay.passgenius.TemporaryConstants
+import dev.jay.passgenius.app.TemporaryConstants
 import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
 import dev.jay.passgenius.ui.theme.OrangePrimary
@@ -34,5 +34,4 @@ fun HomeScreen(innerPadding: PaddingValues) {
                 .background(Color.White)
         )
     }
-
 }
