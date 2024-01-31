@@ -668,14 +668,9 @@ fun SavePasswordCard(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 singleLine = true
             )
-            val annotatedString = annotatedString(
-                generatedPassword = generatedPassword,
-                colorDigit = OrangePrimary,
-                colorText = Color.Black
-            )
             Spacer(modifier = Modifier.height(25.dp))
             Text(
-                text = annotatedString,
+                text = generatedPassword,
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
