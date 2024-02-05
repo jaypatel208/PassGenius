@@ -19,4 +19,6 @@
     <string name="site">Site</string>
     <string name="username">Username</string>
     <string name="blank_site_name">Empty site name prevents learning more about the password.</string>
+    <string name="like_a_desert">It\'s like a desert in here!</string>
+    <string name="no_stored_passwords">You don\'t have any passwords stored yet!</string>
 </resources>
