@@ -23,6 +23,7 @@ class RobustPasswordViewModel @Inject constructor(
     private val _lengthValue = mutableStateOf(12f)
     private val _showCopyAndSaveCard = mutableStateOf(false)
     private val _showSavePasswordCard = mutableStateOf(false)
+    private val _showSnackBar = mutableStateOf(false)
 
     val digitsValue: State<Int> = _digitsValue
     val capitalValue: State<Int> = _capitalValue
@@ -30,6 +31,7 @@ class RobustPasswordViewModel @Inject constructor(
     val lengthValue: State<Float> = _lengthValue
     val showCopyAndSaveCard: State<Boolean> = _showCopyAndSaveCard
     val showSavePasswordCard: State<Boolean> = _showSavePasswordCard
+    val showSnackBar: State<Boolean> = _showSnackBar
 
     val maxCharacteristicValue: State<Int> = derivedStateOf {
         (
@@ -84,5 +86,9 @@ class RobustPasswordViewModel @Inject constructor(
 
     fun updateShowSavePasswordCard(newShowSavePasswordCard: Boolean) {
         _showSavePasswordCard.value = newShowSavePasswordCard
+    }
+
+    fun updateShowSnackBar(newShowSnackBar: Boolean) {
+        _showSnackBar.value = newShowSnackBar
     }
 }

@@ -1,6 +1,7 @@
 package dev.jay.passgenius.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
@@ -19,7 +20,8 @@ fun AppNavigationGraph(
     innerPadding: PaddingValues,
     currentScreen: MutableState<String>,
     onBack: () -> Unit,
-    showBottomBar: MutableState<Boolean>
+    showBottomBar: MutableState<Boolean>,
+    snackState: SnackbarHostState
 ) {
     NavHost(navController = navHostController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) {
@@ -28,7 +30,7 @@ fun AppNavigationGraph(
             showBottomBar.value = true
         }
         composable(Routes.PASSWORD_GENERATE) {
-            PasswordChoiceScreen(innerPadding, onBack, navHostController)
+            PasswordChoiceScreen(innerPadding = innerPadding, onBack = onBack, navController = navHostController)
             currentScreen.value = Routes.PASSWORD_GENERATE
             showBottomBar.value = true
         }
@@ -43,7 +45,11 @@ fun AppNavigationGraph(
             showBottomBar.value = true
         }
         composable(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE) {
-            RobustPasswordGenerateScreen(innerPadding = innerPadding)
+            RobustPasswordGenerateScreen(
+                innerPadding = innerPadding,
+                navController = navHostController,
+                snackState = snackState
+            )
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE
             showBottomBar.value = false
         }

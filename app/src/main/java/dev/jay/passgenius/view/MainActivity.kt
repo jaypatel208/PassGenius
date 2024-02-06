@@ -13,6 +13,8 @@ import androidx.compose.material.icons.outlined.Psychology
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,9 +27,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.jay.passgenius.R
+import dev.jay.passgenius.di.models.SnackBarCustom
+import dev.jay.passgenius.ui.components.AppTopBar
 import dev.jay.passgenius.ui.components.BottomBar
+import dev.jay.passgenius.ui.components.CustomAppSnackBar
 import dev.jay.passgenius.ui.components.HomeScreenTopBar
-import dev.jay.passgenius.ui.components.PasswordGenerateScreenTopBar
 import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
@@ -41,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val currentScreen = remember { mutableStateOf(Routes.HOME_SCREEN) }
                 val showBottomBar = remember { mutableStateOf(true) }
+                val snackState = remember { SnackbarHostState() }
                 val onBack: () -> Unit = {
                     navController.popBackStack()
                 }
@@ -54,31 +59,31 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             when (currentScreen.value) {
                                 Routes.HOME_SCREEN -> HomeScreenTopBar()
-                                Routes.PASSWORD_GENERATE -> PasswordGenerateScreenTopBar(
+                                Routes.PASSWORD_GENERATE -> AppTopBar(
                                     title = "Select Password Type",
                                     icon = Icons.Outlined.AdsClick,
                                     onBack = onBack
                                 )
 
-                                Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE -> PasswordGenerateScreenTopBar(
+                                Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE -> AppTopBar(
                                     title = stringResource(id = R.string.robust_password_generate),
                                     icon = Icons.Outlined.Security,
                                     onBack = onBack
                                 )
 
-                                Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE -> PasswordGenerateScreenTopBar(
+                                Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE -> AppTopBar(
                                     title = stringResource(id = R.string.memorable_password_generate),
                                     icon = Icons.Outlined.Psychology,
                                     onBack = onBack
                                 )
 
-                                Routes.SECURITY_AUDIT -> PasswordGenerateScreenTopBar(
+                                Routes.SECURITY_AUDIT -> AppTopBar(
                                     title = stringResource(id = R.string.security_audit),
                                     icon = Icons.Outlined.Analytics,
                                     onBack = onBack
                                 )
 
-                                Routes.SETTINGS -> PasswordGenerateScreenTopBar(
+                                Routes.SETTINGS -> AppTopBar(
                                     title = stringResource(id = R.string.settings),
                                     icon = Icons.Outlined.Settings,
                                     onBack = onBack
@@ -89,8 +94,17 @@ class MainActivity : ComponentActivity() {
                             if (showBottomBar.value) {
                                 BottomBar(navController)
                             }
+                        }, snackbarHost = {
+                            SnackbarHost(hostState = snackState) {
+                                val customVisuals = it.visuals as SnackBarCustom
+                                CustomAppSnackBar(
+                                    color = Color.White,
+                                    imageVector = customVisuals.imageVector,
+                                    message = customVisuals.message
+                                )
+                            }
                         }) { innerPadding ->
-                        AppEntryPoint(navController, innerPadding, currentScreen, onBack, showBottomBar)
+                        AppEntryPoint(navController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
                     }
                 }
             }
@@ -103,8 +117,9 @@ class MainActivity : ComponentActivity() {
         innerPadding: PaddingValues,
         currentScreen: MutableState<String>,
         onBack: () -> Unit,
-        showBottomBar: MutableState<Boolean>
+        showBottomBar: MutableState<Boolean>,
+        snackState: SnackbarHostState
     ) {
-        AppNavigationGraph(navHostController, innerPadding, currentScreen, onBack, showBottomBar)
+        AppNavigationGraph(navHostController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
     }
 }
