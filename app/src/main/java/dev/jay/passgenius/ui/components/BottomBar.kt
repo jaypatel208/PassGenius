@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import dev.jay.passgenius.ui.theme.OrangePrimary
+import dev.jay.passgenius.utils.Constants
 
 data class BottomNavigationItem(
     val title: String,
@@ -34,22 +35,22 @@ data class BottomNavigationItem(
 
 val bottomNavigationItems = listOf(
     BottomNavigationItem(
-        title = "Home",
+        title = Constants.HOME,
         selectedIcon = Icons.Filled.Home,
         unSelectedIcon = Icons.Outlined.Home
     ),
     BottomNavigationItem(
-        title = "Security Audit",
+        title = Constants.SECURITY_AUDIT,
         selectedIcon = Icons.Filled.Assessment,
         unSelectedIcon = Icons.Outlined.Assessment
     ),
     BottomNavigationItem(
-        title = "Password Generate",
+        title = Constants.PASSWORD_GENERATE,
         selectedIcon = Icons.Filled.Password,
         unSelectedIcon = Icons.Outlined.Password
     ),
     BottomNavigationItem(
-        title = "Settings",
+        title = Constants.SETTINGS,
         selectedIcon = Icons.Filled.Settings,
         unSelectedIcon = Icons.Outlined.Settings
     )
