@@ -11,6 +11,7 @@ import dev.jay.passgenius.view.screens.HomeScreen
 import dev.jay.passgenius.view.screens.MemorablePasswordGenerateScreen
 import dev.jay.passgenius.view.screens.PasswordChoiceScreen
 import dev.jay.passgenius.view.screens.RobustPasswordGenerateScreen
+import dev.jay.passgenius.view.screens.SavePasswordScreen
 import dev.jay.passgenius.view.screens.SecurityAuditScreen
 import dev.jay.passgenius.view.screens.SettingsScreen
 
@@ -56,6 +57,11 @@ fun AppNavigationGraph(
         composable(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE) {
             MemorablePasswordGenerateScreen()
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE
+            showBottomBar.value = false
+        }
+        composable(Routes.PasswordGenerate.PASSWORD_SAVE) {
+            SavePasswordScreen(snackState = snackState)
+            currentScreen.value = Routes.PasswordGenerate.PASSWORD_SAVE
             showBottomBar.value = false
         }
     }

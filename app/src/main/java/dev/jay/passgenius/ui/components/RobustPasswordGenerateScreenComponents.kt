@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -346,7 +345,7 @@ fun SavePasswordCard(
                     siteName = it.take(limitChar)
                     validateSiteName(siteName)
                 },
-                placeholder = { Text(stringResource(id = R.string.site), color = OrangePrimary) },
+                placeholder = { Text(stringResource(id = R.string.enter_site), color = OrangePrimary) },
                 textStyle = TextStyle(color = OrangePrimary),
                 isError = isErrorInSiteName,
                 supportingText = {
@@ -354,7 +353,7 @@ fun SavePasswordCard(
                         Text(
                             text = stringResource(id = R.string.blank_site_name),
                             modifier = Modifier.padding(end = 40.dp),
-                            color = MaterialTheme.colorScheme.error
+                            color = Color.Red
                         )
                     }
                 },
@@ -370,7 +369,7 @@ fun SavePasswordCard(
             OutlinedTextField(
                 value = userName,
                 onValueChange = { userName = it.take(limitChar) },
-                placeholder = { Text(stringResource(id = R.string.username), color = OrangePrimary) },
+                placeholder = { Text(stringResource(id = R.string.enter_username), color = OrangePrimary) },
                 textStyle = TextStyle(color = OrangePrimary),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = OrangePrimary,

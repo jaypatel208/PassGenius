@@ -34,17 +34,27 @@ fun PasswordChoiceScreen(innerPadding: PaddingValues, onBack: () -> Unit, navCon
         val memorableChoiceClick: () -> Unit = {
             navController.navigate(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE)
         }
+
+        val saveChoiceClick: () -> Unit = {
+            navController.navigate(Routes.PasswordGenerate.PASSWORD_SAVE)
+        }
+
         PasswordChoiceText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(18.dp))
         PasswordChoiceCard(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             title = stringResource(id = R.string.robust_security),
             choiceClick = robustChoiceClick
         )
         PasswordChoiceCard(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             title = stringResource(id = R.string.memorable_strength),
             choiceClick = memorableChoiceClick
+        )
+        PasswordChoiceCard(
+            modifier = Modifier.padding(8.dp),
+            title = stringResource(id = R.string.save_password),
+            choiceClick = saveChoiceClick
         )
     }
     BackHandler(enabled = true, onBack = onBack)

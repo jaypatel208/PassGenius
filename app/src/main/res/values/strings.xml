@@ -10,16 +10,22 @@
     <string name="security_audit">Security Audit</string>
     <string name="settings">Settings</string>
     <string name="memorable_strength">Memorable Strength</string>
+    <string name="save_password">Save Password</string>
     <string name="robust_password_generate">Robust Password Generate</string>
     <string name="memorable_password_generate">Memorable Password Generate</string>
     <string name="digits">Digits</string>
     <string name="capitals">Capitals</string>
     <string name="symbols">Symbols</string>
     <string name="save">Save</string>
-    <string name="site">Site</string>
-    <string name="username">Username</string>
+    <string name="enter_site">Enter site name</string>
+    <string name="enter_password">Enter password</string>
+    <string name="site_name">Site-name</string>
+    <string name="enter_username">Enter user name</string>
+    <string name="user_name">Username</string>
     <string name="blank_site_name">Empty site name prevents learning more about the password.</string>
+    <string name="blank_password">Password must be longer than 2 characters.</string>
     <string name="like_a_desert">It\'s like a desert in here!</string>
     <string name="no_stored_passwords">You don\'t have any passwords stored yet!</string>
     <string name="password_copied">Copied securely! Remember, strong passwords are the best snack.</string>
+    <string name="password_saved">Mission accomplished! Password saved.</string>
 </resources>

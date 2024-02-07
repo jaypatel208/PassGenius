@@ -9,5 +9,6 @@ object Routes {
     object PasswordGenerate {
         const val PASSWORD_ROBUST_CHOICE = "password robust choice"
         const val PASSWORD_MEMORABLE_CHOICE = "password memorable choice"
+        const val PASSWORD_SAVE = "password save"
     }
 }

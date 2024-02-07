@@ -2,6 +2,7 @@
 
 package dev.jay.passgenius.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -12,8 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -55,7 +60,7 @@ fun AppTopBar(title: String, icon: ImageVector, onBack: () -> Unit) {
 }
 
 @Composable
-fun CustomAppSnackBar(color: Color,imageVector: ImageVector, message: String, isRtl: Boolean = false) {
+fun CustomAppSnackBar(color: Color, imageVector: ImageVector, message: String, isRtl: Boolean = false) {
     Snackbar(containerColor = OrangePrimary, modifier = Modifier.padding(16.dp)) {
         CompositionLocalProvider(
             LocalLayoutDirection provides
@@ -71,5 +76,65 @@ fun CustomAppSnackBar(color: Color,imageVector: ImageVector, message: String, is
                 Text(message, color = color)
             }
         }
+    }
+}
+
+@Composable
+fun CommonOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    label: String,
+    isError: Boolean,
+    error: String
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { textFieldValue ->
+            onValueChange(textFieldValue)
+        },
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = Color.Gray
+            )
+        },
+        supportingText = {
+            if (isError) {
+                Text(
+                    text = error, modifier = Modifier.padding(end = 20.dp),
+                    color = Color.Red
+                )
+            }
+        },
+        modifier = modifier, label = { Text(text = label) }, colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = Color.Black,
+            focusedBorderColor = OrangePrimary,
+            focusedLabelColor = OrangePrimary,
+            unfocusedLabelColor = Color.Black,
+            focusedTextColor = OrangePrimary,
+            unfocusedTextColor = Color.Black
+        ),
+        singleLine = true,
+        isError = isError
+    )
+}
+
+@Composable
+fun CommonAppButton(onClick: () -> Unit, buttonText: String, modifier: Modifier = Modifier) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val color = if (isPressed) OrangePrimary else Color.Black
+    OutlinedButton(
+        onClick = {
+            onClick()
+        },
+        interactionSource = interactionSource,
+        border = BorderStroke(1.dp, color),
+        modifier = modifier,
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = color)
+    ) {
+        Text(text = buttonText)
     }
 }

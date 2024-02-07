@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AdsClick
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Scaffold
@@ -86,6 +87,12 @@ class MainActivity : ComponentActivity() {
                                 Routes.SETTINGS -> AppTopBar(
                                     title = stringResource(id = R.string.settings),
                                     icon = Icons.Outlined.Settings,
+                                    onBack = onBack
+                                )
+
+                                Routes.PasswordGenerate.PASSWORD_SAVE -> AppTopBar(
+                                    title = stringResource(id = R.string.save_password),
+                                    icon = Icons.Outlined.Save,
                                     onBack = onBack
                                 )
                             }
