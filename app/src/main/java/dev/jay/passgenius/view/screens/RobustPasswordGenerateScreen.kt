@@ -56,7 +56,7 @@ fun RobustPasswordGenerateScreen(
     innerPadding: PaddingValues,
     robustPasswordViewModel: RobustPasswordViewModel = hiltViewModel(),
     navController: NavController,
-    snackState:SnackbarHostState
+    snackState: SnackbarHostState
 ) {
     GeneralUtility.SetStatusBarColor(color = Color.White)
     val context = LocalContext.current
@@ -83,6 +83,9 @@ fun RobustPasswordGenerateScreen(
                 .blur(if (robustPasswordViewModel.showCopyAndSaveCard.value || robustPasswordViewModel.showSavePasswordCard.value) 7.dp else 0.dp)
                 .clickable(onClick = {
                     if (robustPasswordViewModel.showCopyAndSaveCard.value) robustPasswordViewModel.updateShowCopyAndSaveCard(
+                        false
+                    )
+                    if (robustPasswordViewModel.showSavePasswordCard.value) robustPasswordViewModel.updateShowSavePasswordCard(
                         false
                     )
                 }, indication = null, interactionSource = interactionSource)
@@ -127,10 +130,8 @@ fun RobustPasswordGenerateScreen(
         AnimatedVisibility(
             visible = robustPasswordViewModel.showCopyAndSaveCard.value,
             enter = slideInVertically { with(density) { 100.dp.roundToPx() } } + fadeIn(
-                // Fade in with the initial alpha of 0.3f.
                 initialAlpha = 0.5f
             ) + expandVertically(
-                // Expand from the top.
                 expandFrom = Alignment.Bottom
             ),
             exit = slideOutVertically() + shrinkVertically() + fadeOut()
@@ -154,10 +155,8 @@ fun RobustPasswordGenerateScreen(
         AnimatedVisibility(
             visible = robustPasswordViewModel.showSavePasswordCard.value,
             enter = slideInVertically { with(density) { 50.dp.roundToPx() } } + fadeIn(
-                // Fade in with the initial alpha of 0.3f.
                 initialAlpha = 0.3f
             ) + expandVertically(
-                // Expand from the top.
                 expandFrom = Alignment.Top
             ),
             exit = slideOutVertically() + shrinkVertically() + fadeOut()) {

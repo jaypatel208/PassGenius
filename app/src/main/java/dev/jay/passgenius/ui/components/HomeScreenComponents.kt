@@ -2,10 +2,12 @@
 
 package dev.jay.passgenius.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Airlines
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,9 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.R
 import dev.jay.passgenius.di.models.CategoriesPasswordStoreModel
+import dev.jay.passgenius.di.models.PasswordStoreModel
 import dev.jay.passgenius.ui.theme.DavyGrey
 import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
+import java.util.Locale
 
 @Composable
 fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePasswords: String) {
@@ -184,18 +190,19 @@ private fun SiteLogo() {
         ) {
             drawRect(color = Color.Gray)
         }
-        Icon(imageVector = Icons.Filled.Airlines, contentDescription = "Logo")
+        Icon(imageVector = Icons.Filled.Airlines, contentDescription = stringResource(id = R.string.logo))
     }
 }
 
 @Composable
-fun PasswordColumnItem(site: String, username: String) {
+fun PasswordColumnItem(passwordStoreModel: PasswordStoreModel, onPasswordClick: (PasswordStoreModel) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
             .padding(top = 12.dp)
-            .height(50.dp),
+            .height(50.dp)
+            .clickable { onPasswordClick(passwordStoreModel) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -203,18 +210,19 @@ fun PasswordColumnItem(site: String, username: String) {
             SiteLogo()
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 Text(
-                    text = site,
+                    text = passwordStoreModel.site.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
+                val username = passwordStoreModel.username.ifBlank { stringResource(id = R.string.blank_field) }
                 Text(text = username, maxLines = 1, color = Color.Gray)
             }
         }
         Icon(
             imageVector = Icons.Filled.MoreHoriz,
-            contentDescription = "More Password Options",
+            contentDescription = stringResource(id = R.string.more_password_options),
             modifier = Modifier.padding(start = 12.dp, end = 8.dp),
             tint = Color.Black
         )
@@ -234,7 +242,8 @@ fun CategoryItem(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun PasswordsLazyColumn(
     categoriesPasswordStoreModel: List<CategoriesPasswordStoreModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPasswordClick: (PasswordStoreModel) -> Unit
 ) {
     LazyColumn(modifier) {
         categoriesPasswordStoreModel.forEach { category ->
@@ -244,7 +253,9 @@ fun PasswordsLazyColumn(
                 }
             }
             items(category.items) { item ->
-                PasswordColumnItem(item.site, item.username)
+                PasswordColumnItem(passwordStoreModel = item) { clickedPasswordStoreModel ->
+                    onPasswordClick(clickedPasswordStoreModel)
+                }
             }
         }
     }
@@ -268,5 +279,56 @@ fun NoPasswordStoredComponent() {
         Text(text = stringResource(id = R.string.like_a_desert), color = DavyGrey, fontSize = 26.sp)
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(id = R.string.no_stored_passwords), color = Color.Gray, fontSize = 16.sp)
+    }
+}
+
+@Composable
+fun ViewPasswordComponent(siteName: String, username: String, password: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(horizontal = 42.dp),
+        border = BorderStroke(5.dp, Color.Black),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Column {
+                Row {
+                    FieldIndicationText(fieldName = stringResource(id = R.string.site__name))
+                    FieldValueText(fieldValue = " $siteName")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    FieldIndicationText(fieldName = stringResource(id = R.string.username__))
+                    FieldValueText(fieldValue = " $username")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    FieldIndicationText(fieldName = stringResource(id = R.string.password__))
+                    FieldValueText(fieldValue = " $password")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                CommonAppButton(
+                    onClick = { }, buttonText = stringResource(id = R.string.edit), modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                CommonAppButton(
+                    onClick = { }, buttonText = stringResource(id = R.string.delete), modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
     }
 }

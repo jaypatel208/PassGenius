@@ -31,8 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.jay.passgenius.ui.theme.OrangePrimary
 
 @Composable
@@ -137,4 +139,14 @@ fun CommonAppButton(onClick: () -> Unit, buttonText: String, modifier: Modifier 
     ) {
         Text(text = buttonText)
     }
+}
+
+@Composable
+fun FieldIndicationText(fieldName: String, color: Color = Color.Black) {
+    Text(text = fieldName, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = color)
+}
+
+@Composable
+fun FieldValueText(fieldValue: String, color: Color = Color.Black) {
+    Text(text = fieldValue, fontWeight = FontWeight.Normal, fontSize = 16.sp, color = color)
 }
