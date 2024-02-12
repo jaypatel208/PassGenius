@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -283,7 +284,15 @@ fun NoPasswordStoredComponent() {
 }
 
 @Composable
-fun ViewPasswordComponent(siteName: String, username: String, password: String) {
+fun ViewPasswordComponent(
+    siteName: String,
+    username: String,
+    password: String,
+    onUserNameLongClick: () -> Unit,
+    onPasswordLongClick: () -> Unit,
+    onUserNameClick: () -> Unit,
+    onPasswordClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,17 +311,33 @@ fun ViewPasswordComponent(siteName: String, username: String, password: String) 
             Column {
                 Row {
                     FieldIndicationText(fieldName = stringResource(id = R.string.site__name))
-                    FieldValueText(fieldValue = " $siteName")
+                    FieldValueText(
+                        fieldValue = " $siteName"
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     FieldIndicationText(fieldName = stringResource(id = R.string.username__))
-                    FieldValueText(fieldValue = " $username")
+                    FieldValueText(
+                        fieldValue = " $username",
+                        modifier = Modifier.combinedClickable(onLongClick = {
+                            onUserNameLongClick()
+                        }, onClick = {
+                            onUserNameClick()
+                        })
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     FieldIndicationText(fieldName = stringResource(id = R.string.password__))
-                    FieldValueText(fieldValue = " $password")
+                    FieldValueText(
+                        fieldValue = " $password",
+                        modifier = Modifier.combinedClickable(onLongClick = {
+                            onPasswordLongClick()
+                        }, onClick = {
+                            onPasswordClick()
+                        })
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))

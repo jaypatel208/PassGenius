@@ -26,7 +26,7 @@ fun AppNavigationGraph(
 ) {
     NavHost(navController = navHostController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) {
-            HomeScreen(innerPadding)
+            HomeScreen(innerPadding = innerPadding, snackState = snackState, navController = navHostController)
             currentScreen.value = Routes.HOME_SCREEN
             showBottomBar.value = true
         }
@@ -55,7 +55,7 @@ fun AppNavigationGraph(
             showBottomBar.value = false
         }
         composable(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE) {
-            MemorablePasswordGenerateScreen()
+            MemorablePasswordGenerateScreen(innerPadding = innerPadding)
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE
             showBottomBar.value = false
         }

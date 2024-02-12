@@ -147,6 +147,6 @@ fun FieldIndicationText(fieldName: String, color: Color = Color.Black) {
 }
 
 @Composable
-fun FieldValueText(fieldValue: String, color: Color = Color.Black) {
-    Text(text = fieldValue, fontWeight = FontWeight.Normal, fontSize = 16.sp, color = color)
+fun FieldValueText(modifier: Modifier = Modifier, fieldValue: String, color: Color = Color.Black) {
+    Text(text = fieldValue, fontWeight = FontWeight.Normal, fontSize = 16.sp, color = color, modifier = modifier)
 }

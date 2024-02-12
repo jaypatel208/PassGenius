@@ -58,7 +58,7 @@ import dev.jay.passgenius.ui.theme.OrangePrimary
 import kotlin.math.roundToInt
 
 @Composable
-fun PasswordGenerateText(modifier: Modifier = Modifier, fontSize: Int) {
+fun SolidPasswordGenerateText(modifier: Modifier = Modifier, fontSize: Int) {
     Column(modifier = modifier) {
         Text(text = "Create", color = Color.Black, fontSize = fontSize.sp)
         Text(text = "a solid password by", color = Color.Gray, fontSize = fontSize.sp)

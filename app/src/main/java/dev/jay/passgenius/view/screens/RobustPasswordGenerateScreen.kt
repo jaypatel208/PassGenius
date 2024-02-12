@@ -40,16 +40,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.jay.passgenius.R
 import dev.jay.passgenius.database.PasswordModel
-import dev.jay.passgenius.di.models.SnackBarCustom
 import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.CharactersComponent
 import dev.jay.passgenius.ui.components.CopyAndSaveCard
-import dev.jay.passgenius.ui.components.PasswordGenerateText
 import dev.jay.passgenius.ui.components.PasswordShowComponent
 import dev.jay.passgenius.ui.components.SavePasswordCard
+import dev.jay.passgenius.ui.components.SolidPasswordGenerateText
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.viewmodel.RobustPasswordViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun RobustPasswordGenerateScreen(
@@ -62,15 +60,13 @@ fun RobustPasswordGenerateScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     if (robustPasswordViewModel.showSnackBar.value) {
-        coroutineScope.launch {
-            snackState.showSnackbar(
-                SnackBarCustom(
-                    message = context.getString(R.string.password_copied),
-                    imageVector = Icons.Outlined.CopyAll,
-                    duration = SnackbarDuration.Short
-                )
-            )
-        }
+        GeneralUtility.showSnackBar(
+            snackState = snackState,
+            coroutineScope = coroutineScope,
+            message = context.getString(R.string.password_copied),
+            imageVector = Icons.Outlined.CopyAll,
+            snackbarDuration = SnackbarDuration.Short
+        )
         robustPasswordViewModel.updateShowSnackBar(false)
     }
     Box(contentAlignment = Alignment.Center) {
@@ -90,7 +86,7 @@ fun RobustPasswordGenerateScreen(
                     )
                 }, indication = null, interactionSource = interactionSource)
         ) {
-            PasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
+            SolidPasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
             Spacer(modifier = Modifier.height(50.dp))
             CharactersComponent(initialLengthValue = robustPasswordViewModel.lengthValue.value) { newLengthValue ->
                 robustPasswordViewModel.updateLengthValue(newLengthValue)
@@ -143,6 +139,10 @@ fun RobustPasswordGenerateScreen(
                     robustPasswordViewModel.updateShowCopyAndSaveCard(false)
                     robustPasswordViewModel.updateShowSnackBar(true)
                     clipboardManager.setText(AnnotatedString(robustPasswordViewModel.generatedPassword.value))
+                    GeneralUtility.copyTextToClipboard(
+                        clipboardManager = clipboardManager,
+                        text = robustPasswordViewModel.generatedPassword.value
+                    )
                 },
                 onSavePassword = {
                     robustPasswordViewModel.updateShowCopyAndSaveCard(
