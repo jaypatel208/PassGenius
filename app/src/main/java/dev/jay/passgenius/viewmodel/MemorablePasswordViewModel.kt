@@ -13,11 +13,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MemorablePasswordViewModel @Inject constructor(private val getWordsForPasswordUseCase: GetWordsForPasswordUseCase) :
     ViewModel() {
-
+    private val _digitsValue = mutableStateOf(1)
+    private val _wordsValue = mutableStateOf(3)
     private val _wordList = mutableStateOf<List<String>>(emptyList())
     private val _generatedPassword = mutableStateOf("")
 
     val generatedPassword: State<String> = _generatedPassword
+    val digitsValue: State<Int> = _digitsValue
+    val wordsValue: State<Int> = _wordsValue
 
     init {
         initGeneratePassword()
@@ -34,7 +37,7 @@ class MemorablePasswordViewModel @Inject constructor(private val getWordsForPass
 
     private fun generateMemorablePassword() {
         viewModelScope.launch {
-            _generatedPassword.value = PasswordUtility.generateMemorablePassword(_wordList.value, 3, 3)
+            _generatedPassword.value = PasswordUtility.generateMemorablePassword(_wordList.value, 5, 1)
         }
     }
 }

@@ -1,6 +1,7 @@
 package dev.jay.passgenius.view.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.jay.passgenius.R
+import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.MemorablePasswordGenerateText
 import dev.jay.passgenius.ui.components.PasswordShowComponent
 import dev.jay.passgenius.viewmodel.MemorablePasswordViewModel
@@ -25,13 +29,32 @@ fun MemorablePasswordGenerateScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-            .background(Color.White)
+            .background(Color.White), verticalArrangement = Arrangement.SpaceBetween
     ) {
-        MemorablePasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
-        Spacer(modifier = Modifier.height(50.dp))
-        PasswordShowComponent(
-            generatedPassword = memorablePasswordViewModel.generatedPassword.value,
-            onRegenerate = {memorablePasswordViewModel.initGeneratePassword()},
-            onDone = {})
+        Column(modifier = Modifier.weight(8f)) {
+            MemorablePasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
+            Spacer(modifier = Modifier.height(50.dp))
+            AddCharacteristicsComponent(
+                characteristicName = stringResource(id = R.string.words),
+                initialCharacteristicValue = memorablePasswordViewModel.wordsValue.value,
+                maxCharacteristicValue = 6,
+                onValueChanged = {},
+                isMemorable = true
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            AddCharacteristicsComponent(
+                characteristicName = stringResource(id = R.string.digits),
+                initialCharacteristicValue = memorablePasswordViewModel.digitsValue.value,
+                maxCharacteristicValue = 4,
+                onValueChanged = {},
+                isMemorable = true
+            )
+        }
+        Column(modifier = Modifier.weight(2f)) {
+            PasswordShowComponent(
+                generatedPassword = memorablePasswordViewModel.generatedPassword.value,
+                onRegenerate = { memorablePasswordViewModel.initGeneratePassword() },
+                onDone = {})
+        }
     }
 }

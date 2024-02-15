@@ -40,4 +40,5 @@
     <string name="username_copied">Username copied successfully!</string>
     <string name="password_copy_info">Long press on password to copy it!</string>
     <string name="username_copy_info">Long press on username to copy it!</string>
+    <string name="words">Words</string>
 </resources>

@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -107,6 +107,7 @@ fun AddCharacteristicsComponent(
     initialCharacteristicValue: Int,
     maxCharacteristicValue: Int,
     modifier: Modifier = Modifier,
+    isMemorable: Boolean = false,
     onValueChanged: (Int) -> Unit
 ) {
     var internalCharacteristicValue by remember { mutableStateOf(initialCharacteristicValue) }
@@ -129,15 +130,29 @@ fun AddCharacteristicsComponent(
             )
             PlusMinusComponent(
                 onIncrement = {
-                    if (maxCharacteristicValue != 0) {
-                        internalCharacteristicValue++
-                        onValueChanged(internalCharacteristicValue)
+                    if (isMemorable) {
+                        if (internalCharacteristicValue < maxCharacteristicValue) {
+                            internalCharacteristicValue++
+                            onValueChanged(internalCharacteristicValue)
+                        }
+                    } else {
+                        if (maxCharacteristicValue != 0) {
+                            internalCharacteristicValue++
+                            onValueChanged(internalCharacteristicValue)
+                        }
                     }
                 },
                 onDecrement = {
-                    if (internalCharacteristicValue > 1) {
-                        internalCharacteristicValue--
-                        onValueChanged(internalCharacteristicValue)
+                    if (isMemorable) {
+                        if (internalCharacteristicValue > initialCharacteristicValue) {
+                            internalCharacteristicValue--
+                            onValueChanged(internalCharacteristicValue)
+                        }
+                    } else {
+                        if (internalCharacteristicValue > 1) {
+                            internalCharacteristicValue--
+                            onValueChanged(internalCharacteristicValue)
+                        }
                     }
                 })
         }
@@ -145,7 +160,7 @@ fun AddCharacteristicsComponent(
 }
 
 @Composable
-private fun PlusMinusComponent(onIncrement: () -> Unit, onDecrement: () -> Unit) {
+fun PlusMinusComponent(onIncrement: () -> Unit, onDecrement: () -> Unit) {
     Row {
         CircleShapeComponent(
             imageVector = Icons.Outlined.Add,
@@ -186,8 +201,7 @@ fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: C
 fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit, onDone: () -> Unit) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .background(Color.Black),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
