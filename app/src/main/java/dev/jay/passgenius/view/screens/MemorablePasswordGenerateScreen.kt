@@ -36,24 +36,24 @@ fun MemorablePasswordGenerateScreen(
             Spacer(modifier = Modifier.height(50.dp))
             AddCharacteristicsComponent(
                 characteristicName = stringResource(id = R.string.words),
-                initialCharacteristicValue = memorablePasswordViewModel.wordsValue.value,
+                initialCharacteristicValue = 3,
                 maxCharacteristicValue = 6,
-                onValueChanged = {},
+                onValueChanged = { newWordsValue -> memorablePasswordViewModel.updateWordsValue(newWordsValue) },
                 isMemorable = true
             )
             Spacer(modifier = Modifier.height(50.dp))
             AddCharacteristicsComponent(
                 characteristicName = stringResource(id = R.string.digits),
-                initialCharacteristicValue = memorablePasswordViewModel.digitsValue.value,
+                initialCharacteristicValue = 1,
                 maxCharacteristicValue = 4,
-                onValueChanged = {},
+                onValueChanged = { newDigitsValue -> memorablePasswordViewModel.updateDigitsValue(newDigitsValue) },
                 isMemorable = true
             )
         }
         Column(modifier = Modifier.weight(2f)) {
             PasswordShowComponent(
                 generatedPassword = memorablePasswordViewModel.generatedPassword.value,
-                onRegenerate = { memorablePasswordViewModel.initGeneratePassword() },
+                onRegenerate = { memorablePasswordViewModel.reGeneratePassword() },
                 onDone = {})
         }
     }

@@ -2,8 +2,6 @@ package dev.jay.passgenius.utils
 
 import dev.jay.passgenius.di.models.CategoriesPasswordStoreModel
 import dev.jay.passgenius.di.models.PasswordStoreModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 object PasswordUtility {
@@ -55,18 +53,4 @@ object PasswordUtility {
         val shuffledPassword = passwordBuilder.toString().toCharArray().also { it.shuffle() }
         return String(shuffledPassword)
     }
-
-    suspend fun generateMemorablePassword(wordList: List<String>, wordsAmount: Int, digitsAmount: Int): String =
-        withContext(
-            Dispatchers.IO
-        ) {
-            require(wordsAmount in 3..6) { "Number of words must be between 3 and 6 inclusive" }
-            require(digitsAmount in 1..5) { "Number of digits must be between 1 and 5 inclusive" }
-
-            val random = Random(System.currentTimeMillis())
-            val selectedWords = (1..wordsAmount).map { wordList.random(random) }
-            val selectedDigits = (1..digitsAmount).joinToString("") { random.nextInt(10).toString() }
-
-            return@withContext selectedWords.joinToString("-") + "-" + selectedDigits
-        }
 }
