@@ -161,7 +161,7 @@ private fun NoTopRectangle(width: Int) {
 }
 
 @Composable
-fun HomeScreenTopBar() {
+fun HomeScreenTopBar(topBarContainerColor: Color) {
     TopAppBar(
         title = {
             Text(
@@ -178,7 +178,7 @@ fun HomeScreenTopBar() {
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = OrangePrimary)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = topBarContainerColor)
     )
 }
 

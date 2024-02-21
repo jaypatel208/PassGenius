@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,7 +38,7 @@ import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.NoPasswordStoredComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
 import dev.jay.passgenius.ui.components.ViewPasswordComponent
-import dev.jay.passgenius.ui.theme.OrangePrimary
+import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
 import dev.jay.passgenius.viewmodel.HomeScreenViewModel
@@ -49,15 +48,14 @@ fun HomeScreen(
     innerPadding: PaddingValues,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     snackState: SnackbarHostState,
-    navController: NavController
+    navController: NavController,
+    onPasswordsChange: (String) -> Unit
 ) {
-    GeneralUtility.SetStatusBarColor(color = OrangePrimary)
     LaunchedEffect(Unit) {
         homeScreenViewModel.getAllStoredPasswords()
     }
     var itemClicked by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
-    val density = LocalDensity.current
     Box(contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier
@@ -77,6 +75,7 @@ fun HomeScreen(
         ) {
             val totalPasswordsSize = homeScreenViewModel.totalPasswordsSize.value
             if (totalPasswordsSize > 0) {
+                onPasswordsChange(Routes.HOME_SCREEN)
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
                     strongPasswords = homeScreenViewModel.strongPasswords.value.size.toString(),
@@ -93,6 +92,7 @@ fun HomeScreen(
                     itemClicked = true
                 }
             } else {
+                onPasswordsChange(Routes.HOME_SCREEN_NO_PASS)
                 NoPasswordStoredComponent()
             }
         }

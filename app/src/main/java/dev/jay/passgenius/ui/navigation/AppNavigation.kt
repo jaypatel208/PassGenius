@@ -22,11 +22,16 @@ fun AppNavigationGraph(
     currentScreen: MutableState<String>,
     onBack: () -> Unit,
     showBottomBar: MutableState<Boolean>,
-    snackState: SnackbarHostState
+    snackState: SnackbarHostState,
+    onScreenChange: (String) -> Unit
 ) {
     NavHost(navController = navHostController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) {
-            HomeScreen(innerPadding = innerPadding, snackState = snackState, navController = navHostController)
+            HomeScreen(
+                innerPadding = innerPadding,
+                snackState = snackState,
+                navController = navHostController,
+                onPasswordsChange = { currentScreen -> onScreenChange(currentScreen) })
             currentScreen.value = Routes.HOME_SCREEN
             showBottomBar.value = true
         }
