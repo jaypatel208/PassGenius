@@ -19,8 +19,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -35,7 +37,9 @@ import dev.jay.passgenius.ui.components.CustomAppSnackBar
 import dev.jay.passgenius.ui.components.HomeScreenTopBar
 import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.navigation.Routes
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
+import dev.jay.passgenius.utils.GeneralUtility
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -55,11 +59,16 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White)
                 ) {
+                    var screen by remember {
+                        mutableStateOf(Routes.HOME_SCREEN)
+                    }
+                    val topBarColor = if (screen == Routes.HOME_SCREEN) OrangePrimary else Color.White
+                    GeneralUtility.SetStatusBarColor(color = topBarColor)
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
                             when (currentScreen.value) {
-                                Routes.HOME_SCREEN -> HomeScreenTopBar()
+                                Routes.HOME_SCREEN -> HomeScreenTopBar(topBarColor)
                                 Routes.PASSWORD_GENERATE -> AppTopBar(
                                     title = "Select Password Type",
                                     icon = Icons.Outlined.AdsClick,
@@ -111,7 +120,16 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }) { innerPadding ->
-                        AppEntryPoint(navController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
+                        AppEntryPoint(
+                            navController,
+                            innerPadding,
+                            currentScreen,
+                            onBack,
+                            showBottomBar,
+                            snackState
+                        ) {
+                            screen = it
+                        }
                     }
                 }
             }
@@ -125,8 +143,16 @@ class MainActivity : ComponentActivity() {
         currentScreen: MutableState<String>,
         onBack: () -> Unit,
         showBottomBar: MutableState<Boolean>,
-        snackState: SnackbarHostState
+        snackState: SnackbarHostState,
+        onScreenChange: (String) -> Unit
     ) {
-        AppNavigationGraph(navHostController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
+        AppNavigationGraph(
+            navHostController,
+            innerPadding,
+            currentScreen,
+            onBack,
+            showBottomBar,
+            snackState,
+            onScreenChange = { givenScreen -> onScreenChange(givenScreen) })
     }
 }

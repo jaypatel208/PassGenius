@@ -161,7 +161,7 @@ private fun NoTopRectangle(width: Int) {
 }
 
 @Composable
-fun HomeScreenTopBar() {
+fun HomeScreenTopBar(topBarContainerColor: Color) {
     TopAppBar(
         title = {
             Text(
@@ -178,7 +178,7 @@ fun HomeScreenTopBar() {
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = OrangePrimary)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = topBarContainerColor)
     )
 }
 
@@ -309,34 +309,38 @@ fun ViewPasswordComponent(
             verticalArrangement = Arrangement.Center
         ) {
             Column {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     FieldIndicationText(fieldName = stringResource(id = R.string.site__name))
                     FieldValueText(
-                        fieldValue = " $siteName"
+                        fieldValue = " $siteName", modifier = Modifier.padding(horizontal = 3.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     FieldIndicationText(fieldName = stringResource(id = R.string.username__))
                     FieldValueText(
                         fieldValue = " $username",
-                        modifier = Modifier.combinedClickable(onLongClick = {
-                            onUserNameLongClick()
-                        }, onClick = {
-                            onUserNameClick()
-                        })
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                            .combinedClickable(onLongClick = {
+                                onUserNameLongClick()
+                            }, onClick = {
+                                onUserNameClick()
+                            })
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     FieldIndicationText(fieldName = stringResource(id = R.string.password__))
                     FieldValueText(
                         fieldValue = " $password",
-                        modifier = Modifier.combinedClickable(onLongClick = {
-                            onPasswordLongClick()
-                        }, onClick = {
-                            onPasswordClick()
-                        })
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                            .combinedClickable(onLongClick = {
+                                onPasswordLongClick()
+                            }, onClick = {
+                                onPasswordClick()
+                            })
                     )
                 }
             }
