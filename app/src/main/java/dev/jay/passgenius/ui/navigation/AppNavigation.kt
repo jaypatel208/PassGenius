@@ -55,7 +55,11 @@ fun AppNavigationGraph(
             showBottomBar.value = false
         }
         composable(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE) {
-            MemorablePasswordGenerateScreen(innerPadding = innerPadding)
+            MemorablePasswordGenerateScreen(
+                innerPadding = innerPadding,
+                navController = navHostController,
+                snackState = snackState
+            )
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE
             showBottomBar.value = false
         }

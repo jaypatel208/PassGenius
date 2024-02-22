@@ -1,13 +1,6 @@
 package dev.jay.passgenius.view.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.jay.passgenius.R
+import dev.jay.passgenius.ui.components.CustomAnimatedVisibility
 import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.NoPasswordStoredComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
@@ -102,14 +96,7 @@ fun HomeScreen(
                 NoPasswordStoredComponent()
             }
         }
-        AnimatedVisibility(
-            visible = itemClicked,
-            enter = slideInVertically { with(density) { 50.dp.roundToPx() } } + fadeIn(
-                initialAlpha = 0.3f
-            ) + expandVertically(
-                expandFrom = Alignment.Top
-            ),
-            exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+        CustomAnimatedVisibility(visible = itemClicked) {
             val password = homeScreenViewModel.clickedPassword.value
             if (password != null) {
                 val clipboardManager: ClipboardManager = LocalClipboardManager.current
