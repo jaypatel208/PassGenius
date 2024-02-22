@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -94,8 +93,8 @@ fun CharactersComponent(modifier: Modifier = Modifier, initialLengthValue: Float
                     activeTrackColor = Color.Black,
                     inactiveTrackColor = Color.Gray
                 ),
-                valueRange = 12f..22f,
-                steps = 10
+                valueRange = 12f..24f,
+                steps = 12
             )
         }
     }
@@ -201,46 +200,52 @@ fun CircleShapeComponent(imageVector: ImageVector, boxColor: Color, iconColor: C
 fun PasswordShowComponent(generatedPassword: String, onRegenerate: () -> Unit, onDone: () -> Unit) {
     Row(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(Color.Black),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 60.dp)
+                .weight(8f),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
             val annotatedString = annotatedString(generatedPassword, OrangePrimary, Color.White)
-            Text(
-                text = annotatedString,
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.sp
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            Row(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = annotatedString,
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.sp
+                )
+            }
             Icon(
                 imageVector = Icons.Outlined.Autorenew,
                 contentDescription = "ReGenerate Password",
                 tint = if (isPressed) OrangePrimary else Color.Gray,
-                modifier = Modifier.clickable(
-                    onClick = onRegenerate,
-                    indication = null,
-                    interactionSource = interactionSource
-                )
+                modifier = Modifier
+                    .padding(start = 3.dp)
+                    .clickable(
+                        onClick = onRegenerate,
+                        indication = null,
+                        interactionSource = interactionSource
+                    )
             )
         }
-        Icon(
-            imageVector = Icons.Outlined.CheckCircle,
-            contentDescription = "Password Done",
-            tint = OrangePrimary,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .clickable { onDone() }
-        )
+        Row(modifier = Modifier.weight(1f)) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = "Password Done",
+                tint = OrangePrimary,
+                modifier = Modifier
+                    .clickable { onDone() }
+            )
+        }
     }
 }
 
@@ -270,25 +275,28 @@ fun CopyAndSaveCard(generatedPassword: String, onCopyPassword: () -> Unit, onSav
     ) {
         Box(
             modifier = Modifier
-                .padding(vertical = 50.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(vertical = 48.dp, horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                val annotatedString = annotatedString(
-                    generatedPassword = generatedPassword,
-                    colorDigit = OrangePrimary,
-                    colorText = Color.Black
-                )
-                Text(
-                    text = annotatedString,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 1.sp
-                )
+                Row(modifier = Modifier.weight(8f)) {
+                    val annotatedString = annotatedString(
+                        generatedPassword = generatedPassword,
+                        colorDigit = OrangePrimary,
+                        colorText = Color.Black
+                    )
+                    Text(
+                        text = annotatedString,
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 1.sp
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
                 Row {
                     val interactionSourceCopy = remember { MutableInteractionSource() }
@@ -399,7 +407,8 @@ fun SavePasswordCard(
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
+                modifier = Modifier.padding(horizontal = 12.dp)
             )
             Spacer(modifier = Modifier.height(25.dp))
             OutlinedButton(

@@ -1,16 +1,10 @@
 package dev.jay.passgenius.view.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
@@ -43,6 +36,7 @@ import dev.jay.passgenius.database.PasswordModel
 import dev.jay.passgenius.ui.components.AddCharacteristicsComponent
 import dev.jay.passgenius.ui.components.CharactersComponent
 import dev.jay.passgenius.ui.components.CopyAndSaveCard
+import dev.jay.passgenius.ui.components.CustomAnimatedVisibility
 import dev.jay.passgenius.ui.components.PasswordShowComponent
 import dev.jay.passgenius.ui.components.SavePasswordCard
 import dev.jay.passgenius.ui.components.SolidPasswordGenerateText
@@ -84,54 +78,49 @@ fun RobustPasswordGenerateScreen(
                     if (robustPasswordViewModel.showSavePasswordCard.value) robustPasswordViewModel.updateShowSavePasswordCard(
                         false
                     )
-                }, indication = null, interactionSource = interactionSource)
+                }, indication = null, interactionSource = interactionSource),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            SolidPasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
-            Spacer(modifier = Modifier.height(50.dp))
-            CharactersComponent(initialLengthValue = robustPasswordViewModel.lengthValue.value) { newLengthValue ->
-                robustPasswordViewModel.updateLengthValue(newLengthValue)
+            Column {
+                SolidPasswordGenerateText(modifier = Modifier.padding(start = 16.dp, top = 16.dp), fontSize = 36)
+                Spacer(modifier = Modifier.height(50.dp))
+                CharactersComponent(initialLengthValue = robustPasswordViewModel.lengthValue.value) { newLengthValue ->
+                    robustPasswordViewModel.updateLengthValue(newLengthValue)
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                AddCharacteristicsComponent(
+                    characteristicName = stringResource(id = R.string.digits),
+                    maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
+                    initialCharacteristicValue = robustPasswordViewModel.digitsValue.value
+                ) { newDigitValue ->
+                    robustPasswordViewModel.updateDigitsValue(newDigitValue)
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                AddCharacteristicsComponent(
+                    characteristicName = stringResource(id = R.string.capitals),
+                    maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
+                    initialCharacteristicValue = robustPasswordViewModel.capitalValue.value
+                ) { newCapitalsValue ->
+                    robustPasswordViewModel.updateCapitalValue(newCapitalsValue)
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                AddCharacteristicsComponent(
+                    characteristicName = stringResource(id = R.string.symbols),
+                    maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
+                    initialCharacteristicValue = robustPasswordViewModel.symbolsValue.value
+                ) { newSymbolsValue ->
+                    robustPasswordViewModel.updateSymbolsValue(newSymbolsValue)
+                }
             }
-            Spacer(modifier = Modifier.height(30.dp))
-            AddCharacteristicsComponent(
-                characteristicName = stringResource(id = R.string.digits),
-                maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
-                initialCharacteristicValue = robustPasswordViewModel.digitsValue.value
-            ) { newDigitValue ->
-                robustPasswordViewModel.updateDigitsValue(newDigitValue)
+            Column {
+                PasswordShowComponent(
+                    generatedPassword = robustPasswordViewModel.generatedPassword.value,
+                    onRegenerate = { robustPasswordViewModel.regeneratePassword() },
+                    onDone = { robustPasswordViewModel.updateShowCopyAndSaveCard(true) }
+                )
             }
-            Spacer(modifier = Modifier.height(30.dp))
-            AddCharacteristicsComponent(
-                characteristicName = stringResource(id = R.string.capitals),
-                maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
-                initialCharacteristicValue = robustPasswordViewModel.capitalValue.value
-            ) { newCapitalsValue ->
-                robustPasswordViewModel.updateCapitalValue(newCapitalsValue)
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-            AddCharacteristicsComponent(
-                characteristicName = stringResource(id = R.string.symbols),
-                maxCharacteristicValue = robustPasswordViewModel.maxCharacteristicValue.value,
-                initialCharacteristicValue = robustPasswordViewModel.symbolsValue.value
-            ) { newSymbolsValue ->
-                robustPasswordViewModel.updateSymbolsValue(newSymbolsValue)
-            }
-            Spacer(modifier = Modifier.height(50.dp))
-            PasswordShowComponent(
-                generatedPassword = robustPasswordViewModel.generatedPassword.value,
-                onRegenerate = { robustPasswordViewModel.regeneratePassword() },
-                onDone = { robustPasswordViewModel.updateShowCopyAndSaveCard(true) }
-            )
         }
-        val density = LocalDensity.current
-        AnimatedVisibility(
-            visible = robustPasswordViewModel.showCopyAndSaveCard.value,
-            enter = slideInVertically { with(density) { 100.dp.roundToPx() } } + fadeIn(
-                initialAlpha = 0.5f
-            ) + expandVertically(
-                expandFrom = Alignment.Bottom
-            ),
-            exit = slideOutVertically() + shrinkVertically() + fadeOut()
-        ) {
+        CustomAnimatedVisibility(visible = robustPasswordViewModel.showCopyAndSaveCard.value) {
             val clipboardManager: ClipboardManager = LocalClipboardManager.current
             CopyAndSaveCard(
                 generatedPassword = robustPasswordViewModel.generatedPassword.value,
@@ -152,14 +141,7 @@ fun RobustPasswordGenerateScreen(
                 }
             )
         }
-        AnimatedVisibility(
-            visible = robustPasswordViewModel.showSavePasswordCard.value,
-            enter = slideInVertically { with(density) { 50.dp.roundToPx() } } + fadeIn(
-                initialAlpha = 0.3f
-            ) + expandVertically(
-                expandFrom = Alignment.Top
-            ),
-            exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+        CustomAnimatedVisibility(visible = robustPasswordViewModel.showSavePasswordCard.value) {
             SavePasswordCard(
                 generatedPassword = robustPasswordViewModel.generatedPassword.value,
                 onSavePassword = { siteName, userName, generatedPassword ->
