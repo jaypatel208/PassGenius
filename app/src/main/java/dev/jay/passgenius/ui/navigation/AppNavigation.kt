@@ -23,7 +23,8 @@ fun AppNavigationGraph(
     onBack: () -> Unit,
     showBottomBar: MutableState<Boolean>,
     snackState: SnackbarHostState,
-    onScreenChange: (String) -> Unit
+    onScreenChange: (String) -> Unit,
+    onNavigationHappens: (Int) -> Unit
 ) {
     NavHost(navController = navHostController, startDestination = Routes.HOME_SCREEN) {
         composable(Routes.HOME_SCREEN) {
@@ -34,21 +35,25 @@ fun AppNavigationGraph(
                 onPasswordsChange = { currentScreen -> onScreenChange(currentScreen) })
             currentScreen.value = Routes.HOME_SCREEN
             showBottomBar.value = true
+            onNavigationHappens(0)
         }
         composable(Routes.PASSWORD_GENERATE) {
             PasswordChoiceScreen(innerPadding = innerPadding, onBack = onBack, navController = navHostController)
             currentScreen.value = Routes.PASSWORD_GENERATE
             showBottomBar.value = true
+            onNavigationHappens(2)
         }
         composable(Routes.SECURITY_AUDIT) {
             SecurityAuditScreen()
             currentScreen.value = Routes.SECURITY_AUDIT
             showBottomBar.value = true
+            onNavigationHappens(1)
         }
         composable(Routes.SETTINGS) {
             SettingsScreen()
             currentScreen.value = Routes.SETTINGS
             showBottomBar.value = true
+            onNavigationHappens(3)
         }
         composable(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE) {
             RobustPasswordGenerateScreen(
@@ -58,6 +63,7 @@ fun AppNavigationGraph(
             )
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE
             showBottomBar.value = false
+            onNavigationHappens(2)
         }
         composable(Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE) {
             MemorablePasswordGenerateScreen(
@@ -67,11 +73,13 @@ fun AppNavigationGraph(
             )
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE
             showBottomBar.value = false
+            onNavigationHappens(2)
         }
         composable(Routes.PasswordGenerate.PASSWORD_SAVE) {
             SavePasswordScreen(snackState = snackState)
             currentScreen.value = Routes.PasswordGenerate.PASSWORD_SAVE
             showBottomBar.value = false
+            onNavigationHappens(2)
         }
     }
 }
