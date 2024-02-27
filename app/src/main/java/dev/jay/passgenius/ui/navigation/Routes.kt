@@ -12,4 +12,9 @@ object Routes {
         const val PASSWORD_MEMORABLE_CHOICE = "password memorable choice"
         const val PASSWORD_SAVE = "password save"
     }
+
+    object HomeScreen{
+        const val EDIT_PASSWORD = "edit_password"
+        const val SEARCH = "search"
+    }
 }

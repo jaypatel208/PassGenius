@@ -145,7 +145,7 @@ fun CommonAppButton(onClick: () -> Unit, buttonText: String, modifier: Modifier 
         modifier = modifier,
         colors = ButtonDefaults.outlinedButtonColors(contentColor = color)
     ) {
-        Text(text = buttonText)
+        Text(text = buttonText, modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp))
     }
 }
 

@@ -51,7 +51,10 @@ fun HomeScreen(
     navController: NavController,
     onPasswordsChange: (String) -> Unit
 ) {
-    LaunchedEffect(Unit) {
+    var forceRecomposition by remember {
+        mutableStateOf(0)
+    }
+    LaunchedEffect(forceRecomposition) {
         homeScreenViewModel.getAllStoredPasswords()
     }
     var itemClicked by remember { mutableStateOf(false) }
@@ -78,11 +81,11 @@ fun HomeScreen(
                 onPasswordsChange(Routes.HOME_SCREEN)
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
-                    strongPasswords = homeScreenViewModel.strongPasswords.value.size.toString(),
-                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.value.size.toString()
+                    strongPasswords = homeScreenViewModel.strongPasswords.size.toString(),
+                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.size.toString()
                 )
                 PasswordsLazyColumn(
-                    categoriesPasswordStoreModel = PasswordUtility.categorizePasswords(homeScreenViewModel.allStoredPasswords.value),
+                    categoriesPasswordStoreModel = PasswordUtility.categorizePasswords(homeScreenViewModel.allStoredPasswords),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp)
@@ -143,6 +146,16 @@ fun HomeScreen(
                             imageVector = Icons.Outlined.Info,
                             snackbarDuration = SnackbarDuration.Short
                         )
+                    },
+                    onEditButtonClick = {
+                        navController.navigate(
+                            route = "${Routes.HomeScreen.EDIT_PASSWORD}/${homeScreenViewModel.clickedPassword.value!!.id}/${homeScreenViewModel.clickedPassword.value!!.site}/${homeScreenViewModel.clickedPassword.value!!.username}/${homeScreenViewModel.clickedPassword.value!!.password}",
+                        )
+                    },
+                    onDeleteButtonClick = {
+                        homeScreenViewModel.deletePassword(homeScreenViewModel.clickedPassword.value!!)
+                        itemClicked = false
+                        forceRecomposition++
                     }
                 )
             }
