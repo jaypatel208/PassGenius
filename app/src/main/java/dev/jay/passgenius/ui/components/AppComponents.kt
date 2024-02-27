@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -40,6 +42,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -175,5 +178,19 @@ fun CustomAnimatedVisibility(
         exit = slideOutVertically() + shrinkVertically() + fadeOut()
     ) {
         content()
+    }
+}
+
+@Composable
+fun MorePasswordOptions(
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onDismissReq: (Boolean) -> Unit,
+    offset: DpOffset,
+    expanded:Boolean
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = { onDismissReq(false) }, offset = offset) {
+        DropdownMenuItem(text = { Text(text = "Edit") }, onClick = { onEditClick() })
+        DropdownMenuItem(text = { Text(text = "Delete") }, onClick = { onDeleteClick() })
     }
 }

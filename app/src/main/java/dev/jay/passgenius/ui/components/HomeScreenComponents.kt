@@ -38,10 +38,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -197,18 +204,28 @@ private fun SiteLogo() {
 }
 
 @Composable
-fun PasswordColumnItem(passwordStoreModel: PasswordStoreModel, onPasswordClick: (PasswordStoreModel) -> Unit) {
+fun PasswordColumnItem(
+    passwordStoreModel: PasswordStoreModel,
+    onPasswordClick: (PasswordStoreModel) -> Unit,
+    onMoreOptionsClick: (PasswordStoreModel, Offset) -> Unit
+) {
+    var moreOffset by remember {
+        mutableStateOf(Offset.Zero)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
             .padding(top = 12.dp)
-            .height(50.dp)
-            .clickable { onPasswordClick(passwordStoreModel) },
+            .height(50.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 12.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .clickable { onPasswordClick(passwordStoreModel) }) {
             SiteLogo()
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 Text(
@@ -225,7 +242,12 @@ fun PasswordColumnItem(passwordStoreModel: PasswordStoreModel, onPasswordClick: 
         Icon(
             imageVector = Icons.Filled.MoreHoriz,
             contentDescription = stringResource(id = R.string.more_password_options),
-            modifier = Modifier.padding(start = 12.dp, end = 8.dp),
+            modifier = Modifier
+                .padding(start = 12.dp, end = 8.dp)
+                .onGloballyPositioned {
+                    moreOffset = it.positionInRoot()
+                }
+                .clickable { onMoreOptionsClick(passwordStoreModel, moreOffset) },
             tint = Color.Black
         )
     }
@@ -245,7 +267,8 @@ fun CategoryItem(text: String, modifier: Modifier = Modifier) {
 fun PasswordsLazyColumn(
     categoriesPasswordStoreModel: List<CategoriesPasswordStoreModel>,
     modifier: Modifier = Modifier,
-    onPasswordClick: (PasswordStoreModel) -> Unit
+    onPasswordClick: (PasswordStoreModel) -> Unit,
+    onMoreOptionsClick: (PasswordStoreModel, Offset) -> Unit
 ) {
     LazyColumn(modifier) {
         categoriesPasswordStoreModel.forEach { category ->
@@ -255,9 +278,17 @@ fun PasswordsLazyColumn(
                 }
             }
             items(category.items) { item ->
-                PasswordColumnItem(passwordStoreModel = item) { clickedPasswordStoreModel ->
-                    onPasswordClick(clickedPasswordStoreModel)
-                }
+                PasswordColumnItem(
+                    passwordStoreModel = item,
+                    onPasswordClick = { clickedPasswordStoreModel ->
+                        onPasswordClick(clickedPasswordStoreModel)
+                    },
+                    onMoreOptionsClick = { passwordStoreModel, offset ->
+                        onMoreOptionsClick(
+                            passwordStoreModel,
+                            offset
+                        )
+                    })
             }
         }
     }

@@ -28,21 +28,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.jay.passgenius.R
 import dev.jay.passgenius.di.models.PasswordStoreModel
 import dev.jay.passgenius.ui.components.CustomAnimatedVisibility
+import dev.jay.passgenius.ui.components.MorePasswordOptions
 import dev.jay.passgenius.ui.components.PasswordColumnItem
 import dev.jay.passgenius.ui.components.ViewPasswordComponent
 import dev.jay.passgenius.ui.navigation.Routes
@@ -62,11 +68,31 @@ fun SearchScreen(
     var clickedPassword by remember {
         mutableStateOf(PasswordStoreModel(1, "", "", ""))
     }
+    var isContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var itemOffset by remember {
+        mutableStateOf(Offset.Zero)
+    }
+    var boxHeight by remember {
+        mutableStateOf(0.dp)
+    }
+    var boxWidth by remember {
+        mutableStateOf(0.dp)
+    }
+    var moreOptionPassword by remember {
+        mutableStateOf(PasswordStoreModel(id = 0, site = "", username = "", password = ""))
+    }
     val interactionSource = remember { MutableInteractionSource() }
+    val density = LocalDensity.current
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding),
+            .padding(innerPadding)
+            .onGloballyPositioned { layoutCoordinates ->
+                boxHeight = layoutCoordinates.size.height.dp
+                boxWidth = layoutCoordinates.size.width.dp
+            },
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -114,11 +140,33 @@ fun SearchScreen(
                             passwordStoreModel = password, onPasswordClick = {
                                 clickedPassword = password
                                 itemClicked = true
+                            }, onMoreOptionsClick = { passwordStoreModel, offset ->
+                                moreOptionPassword = passwordStoreModel
+                                isContextMenuVisible = true
+                                itemOffset = offset
                             })
                     }
                 }
             }
         }
+        val (xDp, yDp) = with(density) {
+            (itemOffset.x.toDp()) to (itemOffset.y.toDp())
+        }
+        MorePasswordOptions(
+            onEditClick = {
+                navController.navigate(
+                    route = "${Routes.HomeScreen.EDIT_PASSWORD}/${moreOptionPassword.id}/${moreOptionPassword.site}/${moreOptionPassword.username}/${moreOptionPassword.password}",
+                )
+                isContextMenuVisible = false
+            },
+            onDeleteClick = {
+                searchPasswordScreenViewModel.deletePassword(moreOptionPassword)
+                isContextMenuVisible = false
+            },
+            onDismissReq = { b -> isContextMenuVisible = b },
+            offset = DpOffset(xDp / 1.34f, -(boxHeight / 3.6f) + yDp),
+            expanded = isContextMenuVisible
+        )
         CustomAnimatedVisibility(visible = itemClicked) {
             val clipboardManager: ClipboardManager = LocalClipboardManager.current
             val context = LocalContext.current
