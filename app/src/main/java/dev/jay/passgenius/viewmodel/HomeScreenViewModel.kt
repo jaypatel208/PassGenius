@@ -82,4 +82,18 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun onStrongPasswordClick() {
+        _allStoredPasswords.apply {
+            clear()
+            addAll(_strongPasswords)
+        }
+    }
+
+    fun onMediocrePasswordClick() {
+        _allStoredPasswords.apply {
+            clear()
+            addAll(_mediocrePasswords)
+        }
+    }
 }

@@ -109,7 +109,10 @@ fun HomeScreen(
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
                     strongPasswords = homeScreenViewModel.strongPasswords.size.toString(),
-                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.size.toString()
+                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.size.toString(),
+                    onStrongPasswordClick = { homeScreenViewModel.onStrongPasswordClick() },
+                    onMediocrePasswordClick = { homeScreenViewModel.onMediocrePasswordClick() },
+                    onTotalPasswordClick = { homeScreenViewModel.getAllStoredPasswords() }
                 )
                 PasswordsLazyColumn(
                     categoriesPasswordStoreModel = PasswordUtility.categorizePasswords(homeScreenViewModel.allStoredPasswords),

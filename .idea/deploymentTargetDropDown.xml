@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CopyAndSaveCardPreview">
+      <entry key="CustomAppSnackBar">
         <State />
       </entry>
-      <entry key="CustomAppSnackBar">
+      <entry key="MorePasswordOptions">
         <State />
       </entry>
       <entry key="PasswordGenerateScreen">

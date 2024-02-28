@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,7 +65,14 @@ import dev.jay.passgenius.utils.GeneralUtility
 import java.util.Locale
 
 @Composable
-fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePasswords: String) {
+fun MetricsComponent(
+    totalPasswords: String,
+    strongPasswords: String,
+    mediocrePasswords: String,
+    onStrongPasswordClick: () -> Unit,
+    onMediocrePasswordClick: () -> Unit,
+    onTotalPasswordClick: () -> Unit
+) {
     val screenHeight = GeneralUtility.getScreenHeightDP()
     Box(
         modifier = Modifier
@@ -85,19 +93,31 @@ fun MetricsComponent(totalPasswords: String, strongPasswords: String, mediocrePa
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center
             ) {
-                TextTotalPasswords(totalPasswords)
-                TextPasswordStrength(count = strongPasswords, label = stringResource(id = R.string.strong))
-                TextPasswordStrength(count = mediocrePasswords, label = stringResource(id = R.string.mediocre))
+                TextTotalPasswords(text = totalPasswords, onTotalPasswordClick = { onTotalPasswordClick() })
+                TextPasswordStrength(
+                    count = strongPasswords,
+                    label = stringResource(id = R.string.strong),
+                    onPasswordStrengthIndicationClick = { onStrongPasswordClick() })
+                TextPasswordStrength(
+                    count = mediocrePasswords,
+                    label = stringResource(id = R.string.mediocre),
+                    onPasswordStrengthIndicationClick = { onMediocrePasswordClick() })
             }
         }
     }
 }
 
 @Composable
-fun TextTotalPasswords(text: String) {
+fun TextTotalPasswords(text: String, onTotalPasswordClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(
+            onClick = { onTotalPasswordClick() },
+            indication = null,
+            interactionSource = interactionSource
+        )
     )
     {
         Text(
@@ -121,9 +141,16 @@ fun TextTotalPasswords(text: String) {
 }
 
 @Composable
-fun TextPasswordStrength(count: String, label: String) {
+fun TextPasswordStrength(count: String, label: String, onPasswordStrengthIndicationClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
-        modifier = Modifier.padding(start = 12.dp),
+        modifier = Modifier
+            .padding(start = 12.dp)
+            .clickable(
+                onClick = { onPasswordStrengthIndicationClick() },
+                indication = null,
+                interactionSource = interactionSource
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -288,7 +315,8 @@ fun PasswordsLazyColumn(
                             passwordStoreModel,
                             offset
                         )
-                    })
+                    }
+                )
             }
         }
     }
