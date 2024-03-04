@@ -27,6 +27,7 @@ fun PasswordChoiceScreen(innerPadding: PaddingValues, onBack: () -> Unit, navCon
             .padding(innerPadding)
             .background(Color.White),
     ) {
+        GeneralUtility.SetStatusBarColor(color = Color.White)
         val robustChoiceClick: () -> Unit = {
             navController.navigate(Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE)
         }

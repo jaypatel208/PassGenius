@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AdsClick
 import androidx.compose.material.icons.outlined.Analytics
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Psychology
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Security
@@ -19,8 +20,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -35,6 +39,7 @@ import dev.jay.passgenius.ui.components.CustomAppSnackBar
 import dev.jay.passgenius.ui.components.HomeScreenTopBar
 import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.navigation.Routes
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
 
 @AndroidEntryPoint
@@ -46,6 +51,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val currentScreen = remember { mutableStateOf(Routes.HOME_SCREEN) }
                 val showBottomBar = remember { mutableStateOf(true) }
+                val showTopBar = remember { mutableStateOf(true) }
                 val snackState = remember { SnackbarHostState() }
                 val onBack: () -> Unit = {
                     navController.popBackStack()
@@ -55,51 +61,71 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(Color.White)
                 ) {
+                    var screen by remember {
+                        mutableStateOf(Routes.HOME_SCREEN)
+                    }
+                    var selectedItemIndex by rememberSaveable {
+                        mutableStateOf(0)
+                    }
+                    val topBarColor = if (screen == Routes.HOME_SCREEN) OrangePrimary else Color.White
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
-                            when (currentScreen.value) {
-                                Routes.HOME_SCREEN -> HomeScreenTopBar()
-                                Routes.PASSWORD_GENERATE -> AppTopBar(
-                                    title = "Select Password Type",
-                                    icon = Icons.Outlined.AdsClick,
-                                    onBack = onBack
-                                )
+                            if (showTopBar.value) {
+                                when (currentScreen.value) {
+                                    Routes.HOME_SCREEN -> HomeScreenTopBar(
+                                        topBarContainerColor = topBarColor,
+                                        onSearchClick = { navController.navigate(Routes.HomeScreen.SEARCH) })
 
-                                Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE -> AppTopBar(
-                                    title = stringResource(id = R.string.robust_password_generate),
-                                    icon = Icons.Outlined.Security,
-                                    onBack = onBack
-                                )
+                                    Routes.PASSWORD_GENERATE -> AppTopBar(
+                                        title = "Select Password Type",
+                                        icon = Icons.Outlined.AdsClick,
+                                        onBack = onBack
+                                    )
 
-                                Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE -> AppTopBar(
-                                    title = stringResource(id = R.string.memorable_password_generate),
-                                    icon = Icons.Outlined.Psychology,
-                                    onBack = onBack
-                                )
+                                    Routes.PasswordGenerate.PASSWORD_ROBUST_CHOICE -> AppTopBar(
+                                        title = stringResource(id = R.string.robust_password_generate),
+                                        icon = Icons.Outlined.Security,
+                                        onBack = onBack
+                                    )
 
-                                Routes.SECURITY_AUDIT -> AppTopBar(
-                                    title = stringResource(id = R.string.security_audit),
-                                    icon = Icons.Outlined.Analytics,
-                                    onBack = onBack
-                                )
+                                    Routes.PasswordGenerate.PASSWORD_MEMORABLE_CHOICE -> AppTopBar(
+                                        title = stringResource(id = R.string.memorable_password_generate),
+                                        icon = Icons.Outlined.Psychology,
+                                        onBack = onBack
+                                    )
 
-                                Routes.SETTINGS -> AppTopBar(
-                                    title = stringResource(id = R.string.settings),
-                                    icon = Icons.Outlined.Settings,
-                                    onBack = onBack
-                                )
+                                    Routes.SECURITY_AUDIT -> AppTopBar(
+                                        title = stringResource(id = R.string.security_audit),
+                                        icon = Icons.Outlined.Analytics,
+                                        onBack = onBack
+                                    )
 
-                                Routes.PasswordGenerate.PASSWORD_SAVE -> AppTopBar(
-                                    title = stringResource(id = R.string.save_password),
-                                    icon = Icons.Outlined.Save,
-                                    onBack = onBack
-                                )
+                                    Routes.SETTINGS -> AppTopBar(
+                                        title = stringResource(id = R.string.settings),
+                                        icon = Icons.Outlined.Settings,
+                                        onBack = onBack
+                                    )
+                                    Routes.PasswordGenerate.PASSWORD_SAVE -> AppTopBar(
+                                        title = stringResource(id = R.string.save_password),
+                                        icon = Icons.Outlined.Save,
+                                        onBack = onBack
+                                    )
+
+                                    Routes.HomeScreen.EDIT_PASSWORD -> AppTopBar(
+                                        title = stringResource(id = R.string.edit_password),
+                                        icon = Icons.Outlined.Edit,
+                                        onBack = onBack
+                                    )
+                                }
                             }
                         },
                         bottomBar = {
                             if (showBottomBar.value) {
-                                BottomBar(navController)
+                                BottomBar(
+                                    navController = navController,
+                                    selectedItemIndex = selectedItemIndex
+                                )
                             }
                         }, snackbarHost = {
                             SnackbarHost(hostState = snackState) {
@@ -111,7 +137,17 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         }) { innerPadding ->
-                        AppEntryPoint(navController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
+                        AppEntryPoint(
+                            navController,
+                            innerPadding,
+                            currentScreen,
+                            onBack,
+                            showBottomBar,
+                            showTopBar,
+                            snackState,
+                            onScreenChange = { screen = it },
+                            onNavigationHappens = { selectedItemIndex = it }
+                        )
                     }
                 }
             }
@@ -125,8 +161,20 @@ class MainActivity : ComponentActivity() {
         currentScreen: MutableState<String>,
         onBack: () -> Unit,
         showBottomBar: MutableState<Boolean>,
-        snackState: SnackbarHostState
+        showTopBar: MutableState<Boolean>,
+        snackState: SnackbarHostState,
+        onScreenChange: (String) -> Unit,
+        onNavigationHappens: (Int) -> Unit
     ) {
-        AppNavigationGraph(navHostController, innerPadding, currentScreen, onBack, showBottomBar, snackState)
+        AppNavigationGraph(
+            navHostController,
+            innerPadding,
+            currentScreen,
+            onBack,
+            showBottomBar,
+            showTopBar,
+            snackState,
+            onScreenChange = { givenScreen -> onScreenChange(givenScreen) },
+            onNavigationHappens = { onNavigationHappens(it) })
     }
 }
