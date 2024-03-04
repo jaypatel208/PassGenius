@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,11 +29,11 @@ import dev.jay.passgenius.di.models.SnackBarCustom
 import dev.jay.passgenius.ui.components.CommonAppButton
 import dev.jay.passgenius.ui.components.CommonOutlinedTextField
 import dev.jay.passgenius.utils.Constants
+import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.viewmodel.EditPasswordScreenViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun EditPasswordScreen(
     navController: NavController,
@@ -43,6 +44,7 @@ fun EditPasswordScreen(
     snackState: SnackbarHostState,
     editPasswordScreenViewModel: EditPasswordScreenViewModel = hiltViewModel()
 ) {
+    GeneralUtility.SetStatusBarColor(color = Color.White)
     var siteNameScreen by remember { mutableStateOf(siteName) }
     var userNameScreen by remember { mutableStateOf(userName) }
     var passwordScreen by remember { mutableStateOf(password) }

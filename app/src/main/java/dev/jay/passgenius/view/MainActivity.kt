@@ -41,7 +41,6 @@ import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
-import dev.jay.passgenius.utils.GeneralUtility
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -69,7 +68,6 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(0)
                     }
                     val topBarColor = if (screen == Routes.HOME_SCREEN) OrangePrimary else Color.White
-                    GeneralUtility.SetStatusBarColor(color = topBarColor)
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
@@ -108,7 +106,6 @@ class MainActivity : ComponentActivity() {
                                         icon = Icons.Outlined.Settings,
                                         onBack = onBack
                                     )
-
                                     Routes.PasswordGenerate.PASSWORD_SAVE -> AppTopBar(
                                         title = stringResource(id = R.string.save_password),
                                         icon = Icons.Outlined.Save,

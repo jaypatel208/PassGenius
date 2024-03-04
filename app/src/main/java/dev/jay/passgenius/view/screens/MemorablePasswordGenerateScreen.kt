@@ -46,6 +46,7 @@ fun MemorablePasswordGenerateScreen(
     navController: NavController,
     snackState: SnackbarHostState
 ) {
+    GeneralUtility.SetStatusBarColor(color = Color.White)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     if (memorablePasswordViewModel.showSnackBar.value) {

@@ -62,6 +62,7 @@ fun SearchScreen(
     searchPasswordScreenViewModel: SearchPasswordScreenViewModel = hiltViewModel(),
     snackState: SnackbarHostState
 ) {
+    GeneralUtility.SetStatusBarColor(color = Color.White)
     val searchText by searchPasswordScreenViewModel.searchText.collectAsState()
     val passwords by searchPasswordScreenViewModel.allStoredPassword.collectAsState()
     var itemClicked by remember { mutableStateOf(false) }

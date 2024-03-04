@@ -46,6 +46,7 @@ import dev.jay.passgenius.ui.components.NoPasswordStoredComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
 import dev.jay.passgenius.ui.components.ViewPasswordComponent
 import dev.jay.passgenius.ui.navigation.Routes
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
 import dev.jay.passgenius.viewmodel.HomeScreenViewModel
@@ -105,6 +106,7 @@ fun HomeScreen(
         ) {
             val totalPasswordsSize = homeScreenViewModel.totalPasswordsSize.value
             if (totalPasswordsSize > 0) {
+                GeneralUtility.SetStatusBarColor(color = OrangePrimary)
                 onPasswordsChange(Routes.HOME_SCREEN)
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
@@ -129,6 +131,7 @@ fun HomeScreen(
                     }
                 )
             } else {
+                GeneralUtility.SetStatusBarColor(color = Color.White)
                 onPasswordsChange(Routes.HOME_SCREEN_NO_PASS)
                 NoPasswordStoredComponent()
             }
