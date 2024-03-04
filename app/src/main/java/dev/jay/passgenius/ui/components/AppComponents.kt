@@ -2,6 +2,13 @@
 
 package dev.jay.passgenius.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,6 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -30,8 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -137,7 +148,7 @@ fun CommonAppButton(onClick: () -> Unit, buttonText: String, modifier: Modifier 
         modifier = modifier,
         colors = ButtonDefaults.outlinedButtonColors(contentColor = color)
     ) {
-        Text(text = buttonText)
+        Text(text = buttonText, modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp))
     }
 }
 
@@ -149,4 +160,37 @@ fun FieldIndicationText(fieldName: String, color: Color = Color.Black) {
 @Composable
 fun FieldValueText(modifier: Modifier = Modifier, fieldValue: String, color: Color = Color.Black) {
     Text(text = fieldValue, fontWeight = FontWeight.Normal, fontSize = 16.sp, color = color, modifier = modifier)
+}
+
+@Composable
+fun CustomAnimatedVisibility(
+    visible: Boolean,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically { with(density) { 50.dp.roundToPx() } } + fadeIn(
+            initialAlpha = 0.3f
+        ) + expandVertically(
+            expandFrom = Alignment.Top
+        ),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun MorePasswordOptions(
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onDismissReq: (Boolean) -> Unit,
+    offset: DpOffset,
+    expanded:Boolean
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = { onDismissReq(false) }, offset = offset) {
+        DropdownMenuItem(text = { Text(text = "Edit") }, onClick = { onEditClick() })
+        DropdownMenuItem(text = { Text(text = "Delete") }, onClick = { onDeleteClick() })
+    }
 }

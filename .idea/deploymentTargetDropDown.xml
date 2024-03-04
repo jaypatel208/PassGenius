@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CopyAndSaveCardPreview">
+      <entry key="CustomAppSnackBar">
         <State />
       </entry>
-      <entry key="CustomAppSnackBar">
+      <entry key="MorePasswordOptions">
         <State />
       </entry>
       <entry key="PasswordGenerateScreen">
@@ -43,7 +43,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-02-21T06:24:04.052929200Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-02-26T04:59:58.571940Z" />
         </State>
       </entry>
     </value>
