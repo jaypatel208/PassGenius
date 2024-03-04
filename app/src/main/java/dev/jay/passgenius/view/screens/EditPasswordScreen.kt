@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Update
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -21,43 +21,47 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import dev.jay.passgenius.R
 import dev.jay.passgenius.database.PasswordModel
 import dev.jay.passgenius.di.models.SnackBarCustom
 import dev.jay.passgenius.ui.components.CommonAppButton
 import dev.jay.passgenius.ui.components.CommonOutlinedTextField
 import dev.jay.passgenius.utils.Constants
-import dev.jay.passgenius.viewmodel.SavePasswordScreenViewModel
+import dev.jay.passgenius.viewmodel.EditPasswordScreenViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun SavePasswordScreen(
+fun EditPasswordScreen(
+    navController: NavController,
+    passwordID: Int,
+    siteName: String,
+    userName: String,
+    password: String,
     snackState: SnackbarHostState,
-    savePasswordScreenViewModel: SavePasswordScreenViewModel = hiltViewModel()
+    editPasswordScreenViewModel: EditPasswordScreenViewModel = hiltViewModel()
 ) {
-    var siteName by remember { mutableStateOf("") }
-    var userName by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var siteNameScreen by remember { mutableStateOf(siteName) }
+    var userNameScreen by remember { mutableStateOf(userName) }
+    var passwordScreen by remember { mutableStateOf(password) }
     var isErrorInSiteName by remember { mutableStateOf(false) }
     var isErrorInPassword by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    if (savePasswordScreenViewModel.showSnackBar.value) {
+    if (editPasswordScreenViewModel.showSnackBar.value) {
         coroutineScope.launch {
             snackState.showSnackbar(
                 SnackBarCustom(
-                    message = context.getString(R.string.password_saved),
-                    imageVector = Icons.Outlined.Save,
+                    message = context.getString(R.string.password_updated),
+                    imageVector = Icons.Outlined.Update,
                     duration = SnackbarDuration.Short
                 )
             )
         }
-        savePasswordScreenViewModel.updateShowSnackBar(false)
+        editPasswordScreenViewModel.updateShowSnackBar(false)
     }
 
     Column(
@@ -73,9 +77,9 @@ fun SavePasswordScreen(
             isErrorInPassword = (password.length <= 3)
         }
         CommonOutlinedTextField(
-            value = siteName,
+            value = siteNameScreen,
             onValueChange = { newSiteName ->
-                siteName = newSiteName.take(Constants.LIMIT_CHAR_SITE_NAME)
+                siteNameScreen = newSiteName.take(Constants.LIMIT_CHAR_SITE_NAME)
                 validateSiteName(newSiteName)
             },
             placeholder = stringResource(
@@ -89,9 +93,9 @@ fun SavePasswordScreen(
             error = stringResource(id = R.string.blank_site_name)
         )
         CommonOutlinedTextField(
-            value = userName,
+            value = userNameScreen,
             onValueChange = { newUserName ->
-                userName = newUserName
+                userNameScreen = newUserName
             },
             placeholder = stringResource(
                 id = R.string.enter_username
@@ -103,10 +107,10 @@ fun SavePasswordScreen(
             isError = false, error = ""
         )
         CommonOutlinedTextField(
-            value = password,
+            value = passwordScreen,
             onValueChange = { newPassword ->
                 validatePassword(newPassword)
-                password = newPassword.take(Constants.LIMIT_CHAR_PASSWORD)
+                passwordScreen = newPassword.take(Constants.LIMIT_CHAR_PASSWORD)
             },
             placeholder = stringResource(
                 id = R.string.enter_password
@@ -120,26 +124,21 @@ fun SavePasswordScreen(
         )
         CommonAppButton(
             onClick = {
-                GlobalScope.launch(Dispatchers.IO) {
-                    validateSiteName(siteName)
-                    validatePassword(password)
-                    if (!isErrorInSiteName && !isErrorInPassword) {
-                        savePasswordScreenViewModel.savePassword(
-                            PasswordModel(
-                                id = 0,
-                                site = siteName,
-                                username = userName,
-                                password = password
-                            )
+                validateSiteName(siteNameScreen)
+                validatePassword(passwordScreen)
+                if (!isErrorInSiteName && !isErrorInPassword) {
+                    editPasswordScreenViewModel.updatePassword(
+                        PasswordModel(
+                            id = passwordID,
+                            site = siteNameScreen,
+                            username = userNameScreen,
+                            password = passwordScreen
                         )
-                        siteName = ""
-                        userName = ""
-                        password = ""
-                        savePasswordScreenViewModel.updateShowSnackBar(true)
-                    }
+                    )
+                    navController.popBackStack()
                 }
             },
-            buttonText = stringResource(id = R.string.save),
+            buttonText = stringResource(id = R.string.update_password),
             modifier = Modifier.padding(vertical = 16.dp)
         )
     }

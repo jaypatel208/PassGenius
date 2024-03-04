@@ -1,13 +1,6 @@
 package dev.jay.passgenius.view.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -28,24 +21,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.jay.passgenius.R
+import dev.jay.passgenius.di.models.PasswordStoreModel
+import dev.jay.passgenius.ui.components.CustomAnimatedVisibility
 import dev.jay.passgenius.ui.components.MetricsComponent
+import dev.jay.passgenius.ui.components.MorePasswordOptions
 import dev.jay.passgenius.ui.components.NoPasswordStoredComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
 import dev.jay.passgenius.ui.components.ViewPasswordComponent
-import dev.jay.passgenius.ui.theme.OrangePrimary
+import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
 import dev.jay.passgenius.viewmodel.HomeScreenViewModel
@@ -55,20 +55,42 @@ fun HomeScreen(
     innerPadding: PaddingValues,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     snackState: SnackbarHostState,
-    navController: NavController
+    navController: NavController,
+    onPasswordsChange: (String) -> Unit
 ) {
-    GeneralUtility.SetStatusBarColor(color = OrangePrimary)
-    LaunchedEffect(Unit) {
+    var forceRecomposition by remember {
+        mutableStateOf(0)
+    }
+    LaunchedEffect(forceRecomposition) {
         homeScreenViewModel.getAllStoredPasswords()
     }
     var itemClicked by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
+    var isContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var itemOffset by remember {
+        mutableStateOf(Offset.Zero)
+    }
+    var boxHeight by remember {
+        mutableStateOf(0.dp)
+    }
+    var boxWidth by remember {
+        mutableStateOf(0.dp)
+    }
+    var moreOptionPassword by remember {
+        mutableStateOf(PasswordStoreModel(id = 0, site = "", username = "", password = ""))
+    }
     val density = LocalDensity.current
     Box(contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .onGloballyPositioned { layoutCoordinates ->
+                    boxHeight = layoutCoordinates.size.height.dp
+                    boxWidth = layoutCoordinates.size.width.dp
+                }
                 .clickable(
                     onClick = {
                         if (itemClicked) {
@@ -83,33 +105,51 @@ fun HomeScreen(
         ) {
             val totalPasswordsSize = homeScreenViewModel.totalPasswordsSize.value
             if (totalPasswordsSize > 0) {
+                onPasswordsChange(Routes.HOME_SCREEN)
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
-                    strongPasswords = homeScreenViewModel.strongPasswords.value.size.toString(),
-                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.value.size.toString()
+                    strongPasswords = homeScreenViewModel.strongPasswords.size.toString(),
+                    mediocrePasswords = homeScreenViewModel.mediocrePasswords.size.toString()
                 )
                 PasswordsLazyColumn(
-                    categoriesPasswordStoreModel = PasswordUtility.categorizePasswords(homeScreenViewModel.allStoredPasswords.value),
+                    categoriesPasswordStoreModel = PasswordUtility.categorizePasswords(homeScreenViewModel.allStoredPasswords),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                        .background(Color.White)
-                ) { clickedPasswordStoreModel ->
-                    homeScreenViewModel.updateClickedPassword(clickedPasswordStoreModel)
-                    itemClicked = true
-                }
+                        .background(Color.White), onPasswordClick = { clickedPasswordStoreModel ->
+                        homeScreenViewModel.updateClickedPassword(clickedPasswordStoreModel)
+                        itemClicked = true
+                    }, onMoreOptionsClick = { passwordStoreModel, offset ->
+                        moreOptionPassword = passwordStoreModel
+                        isContextMenuVisible = true
+                        itemOffset = offset
+                    }
+                )
             } else {
+                onPasswordsChange(Routes.HOME_SCREEN_NO_PASS)
                 NoPasswordStoredComponent()
             }
         }
-        AnimatedVisibility(
-            visible = itemClicked,
-            enter = slideInVertically { with(density) { 50.dp.roundToPx() } } + fadeIn(
-                initialAlpha = 0.3f
-            ) + expandVertically(
-                expandFrom = Alignment.Top
-            ),
-            exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+        val (xDp, yDp) = with(density) {
+            (itemOffset.x.toDp()) to (itemOffset.y.toDp())
+        }
+        MorePasswordOptions(
+            onEditClick = {
+                navController.navigate(
+                    route = "${Routes.HomeScreen.EDIT_PASSWORD}/${moreOptionPassword.id}/${moreOptionPassword.site}/${moreOptionPassword.username}/${moreOptionPassword.password}",
+                )
+                isContextMenuVisible = false
+            },
+            onDeleteClick = {
+                homeScreenViewModel.deletePassword(moreOptionPassword)
+                forceRecomposition++
+                isContextMenuVisible = false
+            },
+            onDismissReq = { b -> isContextMenuVisible = b },
+            offset = DpOffset(xDp / 1.34f, -(boxHeight / 3f) + yDp),
+            expanded = isContextMenuVisible
+        )
+        CustomAnimatedVisibility(visible = itemClicked) {
             val password = homeScreenViewModel.clickedPassword.value
             if (password != null) {
                 val clipboardManager: ClipboardManager = LocalClipboardManager.current
@@ -156,6 +196,16 @@ fun HomeScreen(
                             imageVector = Icons.Outlined.Info,
                             snackbarDuration = SnackbarDuration.Short
                         )
+                    },
+                    onEditButtonClick = {
+                        navController.navigate(
+                            route = "${Routes.HomeScreen.EDIT_PASSWORD}/${homeScreenViewModel.clickedPassword.value!!.id}/${homeScreenViewModel.clickedPassword.value!!.site}/${homeScreenViewModel.clickedPassword.value!!.username}/${homeScreenViewModel.clickedPassword.value!!.password}",
+                        )
+                    },
+                    onDeleteButtonClick = {
+                        homeScreenViewModel.deletePassword(homeScreenViewModel.clickedPassword.value!!)
+                        itemClicked = false
+                        forceRecomposition++
                     }
                 )
             }
