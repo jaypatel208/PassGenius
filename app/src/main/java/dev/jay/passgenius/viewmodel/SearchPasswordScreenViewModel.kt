@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,10 +40,9 @@ class SearchPasswordScreenViewModel @Inject constructor(
         getAllStoredPasswords()
     }
 
-    private fun getAllStoredPasswords() {
+    fun getAllStoredPasswords() {
         viewModelScope.launch {
-            val allPasswords = getAllPasswordsUseCase.getAllPassword()
-            _allStoredPassword.value = allPasswords
+            _allStoredPassword.update { getAllPasswordsUseCase.getAllPassword().toMutableList() }
         }
     }
 

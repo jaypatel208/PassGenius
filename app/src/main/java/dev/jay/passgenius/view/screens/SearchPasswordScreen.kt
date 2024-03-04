@@ -23,6 +23,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,12 @@ fun SearchScreen(
     searchPasswordScreenViewModel: SearchPasswordScreenViewModel = hiltViewModel(),
     snackState: SnackbarHostState
 ) {
+    var forceRecomposition by remember {
+        mutableStateOf(0)
+    }
+    LaunchedEffect(forceRecomposition){
+        searchPasswordScreenViewModel.getAllStoredPasswords()
+    }
     val searchText by searchPasswordScreenViewModel.searchText.collectAsState()
     val passwords by searchPasswordScreenViewModel.allStoredPassword.collectAsState()
     var itemClicked by remember { mutableStateOf(false) }
@@ -162,6 +169,8 @@ fun SearchScreen(
             onDeleteClick = {
                 searchPasswordScreenViewModel.deletePassword(moreOptionPassword)
                 isContextMenuVisible = false
+                searchPasswordScreenViewModel.getAllStoredPasswords()
+                forceRecomposition++
             },
             onDismissReq = { b -> isContextMenuVisible = b },
             offset = DpOffset(xDp / 1.34f, -(boxHeight / 3.6f) + yDp),
@@ -221,6 +230,7 @@ fun SearchScreen(
                 onDeleteButtonClick = {
                     searchPasswordScreenViewModel.deletePassword(clickedPassword)
                     itemClicked = false
+                    forceRecomposition++
                 }
             )
         }
