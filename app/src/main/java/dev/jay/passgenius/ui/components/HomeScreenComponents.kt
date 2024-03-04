@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -161,7 +162,7 @@ private fun NoTopRectangle(width: Int) {
 }
 
 @Composable
-fun HomeScreenTopBar() {
+fun HomeScreenTopBar(topBarContainerColor: Color, onSearchClick: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -170,7 +171,7 @@ fun HomeScreenTopBar() {
                 fontWeight = FontWeight.Bold
             )
         }, actions = {
-            IconButton(onClick = { /* TODO*/ }) {
+            IconButton(onClick = { onSearchClick() }) {
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = stringResource(id = R.string.search),
@@ -178,7 +179,7 @@ fun HomeScreenTopBar() {
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = OrangePrimary)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = topBarContainerColor)
     )
 }
 
@@ -291,47 +292,50 @@ fun ViewPasswordComponent(
     onUserNameLongClick: () -> Unit,
     onPasswordLongClick: () -> Unit,
     onUserNameClick: () -> Unit,
-    onPasswordClick: () -> Unit
+    onPasswordClick: () -> Unit,
+    onEditButtonClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .padding(horizontal = 42.dp),
+            .wrapContentHeight()
+            .padding(horizontal = 24.dp),
         border = BorderStroke(5.dp, Color.Black),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp)
         ) {
             Column {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     FieldIndicationText(fieldName = stringResource(id = R.string.site__name))
                     FieldValueText(
-                        fieldValue = " $siteName"
+                        fieldValue = siteName, modifier = Modifier.padding(horizontal = 3.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     FieldIndicationText(fieldName = stringResource(id = R.string.username__))
                     FieldValueText(
-                        fieldValue = " $username",
-                        modifier = Modifier.combinedClickable(onLongClick = {
-                            onUserNameLongClick()
-                        }, onClick = {
-                            onUserNameClick()
-                        })
+                        fieldValue = username,
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                            .combinedClickable(onLongClick = {
+                                onUserNameLongClick()
+                            }, onClick = {
+                                onUserNameClick()
+                            })
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     FieldIndicationText(fieldName = stringResource(id = R.string.password__))
                     FieldValueText(
-                        fieldValue = " $password",
+                        fieldValue = password,
                         modifier = Modifier.combinedClickable(onLongClick = {
                             onPasswordLongClick()
                         }, onClick = {
@@ -340,18 +344,20 @@ fun ViewPasswordComponent(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 CommonAppButton(
-                    onClick = { }, buttonText = stringResource(id = R.string.edit), modifier = Modifier
+                    onClick = { onEditButtonClick() },
+                    buttonText = stringResource(id = R.string.edit),
+                    modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 16.dp)
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(30.dp))
                 CommonAppButton(
-                    onClick = { }, buttonText = stringResource(id = R.string.delete), modifier = Modifier
+                    onClick = { onDeleteButtonClick() },
+                    buttonText = stringResource(id = R.string.delete),
+                    modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 16.dp)
                 )
             }
         }

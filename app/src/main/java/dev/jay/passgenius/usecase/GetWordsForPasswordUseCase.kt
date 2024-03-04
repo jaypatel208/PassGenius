@@ -36,7 +36,7 @@ class GetWordsForPasswordUseCase @Inject constructor() {
         withContext(
             Dispatchers.IO
         ) {
-            require(wordsAmount in 3..6) { "Number of words must be between 3 and 6 inclusive" }
+            require(wordsAmount in 3..10) { "Number of words must be between 3 and 6 inclusive" }
             require(digitsAmount in 1..5) { "Number of digits must be between 1 and 5 inclusive" }
 
             val wordList = getWords(context)
