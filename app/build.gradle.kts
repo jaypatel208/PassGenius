@@ -89,8 +89,14 @@ dependencies {
     // Room DB
     val roomVersion = "2.6.1"
 
-    implementation ("androidx.room:room-runtime:$roomVersion")
-    implementation ("androidx.room:room-ktx:$roomVersion")
-    annotationProcessor ("androidx.room:room-compiler:$roomVersion")
-    kapt ("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.0-beta01")
+
+    //Biometrics
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
 }
