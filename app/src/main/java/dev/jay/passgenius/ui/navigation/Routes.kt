@@ -6,6 +6,7 @@ object Routes {
     const val PASSWORD_GENERATE = "password generate"
     const val SECURITY_AUDIT = "security audit"
     const val SETTINGS = "settings"
+    const val AUTHENTICATION = "authentication"
 
     object PasswordGenerate {
         const val PASSWORD_ROBUST_CHOICE = "password robust choice"

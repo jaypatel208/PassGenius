@@ -14,4 +14,13 @@ object Constants {
         const val USER_NAME = "user_name"
         const val PASSWORD = "password"
     }
+
+    object Preferences{
+        const val AUTH_STATUS = "auth_status"
+        const val PASS_GENIUS = "pass_genius"
+        const val AUTH_TRUE = "auth_true"
+        const val AUTH_FALSE = "auth_false"
+        const val DEFAULT_VAL = "default_value"
+        const val PIN = "login_pin"
+    }
 }

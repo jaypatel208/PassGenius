@@ -2,12 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CopyAndSaveCardPreview">
-        <State />
-      </entry>
-      <entry key="CustomAppSnackBar">
-        <State />
-      </entry>
       <entry key="PasswordGenerateScreen">
         <State>
           <targetSelectedWithDropDown>
@@ -24,6 +18,9 @@
           <timeTargetWasSelectedWithDropDown value="2024-01-08T12:09:37.090941200Z" />
         </State>
       </entry>
+      <entry key="PinIndicatorFingerPrint">
+        <State />
+      </entry>
       <entry key="SavePasswordCard">
         <State />
       </entry>
@@ -32,17 +29,6 @@
       </entry>
       <entry key="app">
         <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\pc\.android\avd\Pixel_7_Pro_API_34.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
           <targetSelectedWithDropDown>
             <Target>
               <type value="QUICK_BOOT_TARGET" />
@@ -54,7 +40,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-04T05:46:52.230454400Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-03-06T09:21:18.597744200Z" />
         </State>
       </entry>
     </value>

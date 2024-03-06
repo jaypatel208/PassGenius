@@ -20,20 +20,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,11 +49,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.jay.passgenius.R
 import dev.jay.passgenius.ui.theme.OrangePrimary
 
 @Composable
@@ -187,10 +199,128 @@ fun MorePasswordOptions(
     onDeleteClick: () -> Unit,
     onDismissReq: (Boolean) -> Unit,
     offset: DpOffset,
-    expanded:Boolean
+    expanded: Boolean
 ) {
     DropdownMenu(expanded = expanded, onDismissRequest = { onDismissReq(false) }, offset = offset) {
-        DropdownMenuItem(text = { Text(text = "Edit") }, onClick = { onEditClick() })
-        DropdownMenuItem(text = { Text(text = "Delete") }, onClick = { onDeleteClick() })
+        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.edit)) }, onClick = { onEditClick() })
+        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.delete)) }, onClick = { onDeleteClick() })
     }
+}
+
+@Composable
+fun BottomSheet(
+    sheetState: SheetState,
+    pinIndicationList: List<Int>,
+    onSheet: (Boolean) -> Unit,
+    onButtonClick: (String) -> Unit,
+    onBackSpaceClick: () -> Unit,
+    onClearClick: () -> Unit
+) {
+    ModalBottomSheet(onDismissRequest = { onSheet(false) }, sheetState = sheetState, containerColor = Color.White) {
+        EnterPinLayout(
+            pinIndicationList = pinIndicationList,
+            onButtonClick = { buttonText -> onButtonClick(buttonText) },
+            onBackSpaceClick = { onBackSpaceClick() },
+            onClearClick = { onClearClick() })
+    }
+}
+
+@Composable
+fun FilledButton(text: String, onButtonClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Card(
+        colors = CardDefaults.cardColors(containerColor = OrangePrimary),
+        modifier = Modifier
+            .padding(bottom = 24.dp)
+            .clickable(onClick = { onButtonClick() }, indication = null, interactionSource = interactionSource)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp
+        )
+    }
+}
+
+@Composable
+fun ExitAlertDialog(cancel: (Boolean) -> Unit, ok: () -> Unit) {
+    val openDialog = remember { mutableStateOf(true) }
+    AlertDialog(
+        onDismissRequest = {
+            cancel(false)
+        },
+        title = {
+            Text(
+                text = stringResource(R.string.close_the_app),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        },
+        text = {
+            Text(text = stringResource(R.string.do_you_want_to_exit_the_app), fontSize = 16.sp)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    openDialog.value = false
+                    ok()
+                }) {
+                Text(
+                    stringResource(R.string.yes),
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(color = Color.Black)
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    openDialog.value = false
+                    cancel(false)
+                }) {
+                Text(
+                    stringResource(R.string.no),
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(color = Color.Black)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun InfoDialog(title: String, info: String, buttonText: String, ok: () -> Unit) {
+    val openDialog = remember { mutableStateOf(true) }
+    AlertDialog(
+        onDismissRequest = {
+        },
+        icon = {
+            Icon(imageVector = Icons.Outlined.Info, contentDescription = "Info Icon")
+        },
+        title = {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        },
+        text = {
+            Text(text = info, fontSize = 16.sp, textAlign = TextAlign.Center)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    openDialog.value = false
+                    ok()
+                }) {
+                Text(
+                    buttonText,
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(color = Color.Black)
+                )
+            }
+        }
+    )
 }

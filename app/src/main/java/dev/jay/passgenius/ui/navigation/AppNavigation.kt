@@ -1,5 +1,6 @@
 package dev.jay.passgenius.ui.navigation
 
+import android.view.Window
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import dev.jay.passgenius.utils.Constants
+import dev.jay.passgenius.view.screens.AuthenticationScreen
 import dev.jay.passgenius.view.screens.EditPasswordScreen
 import dev.jay.passgenius.view.screens.HomeScreen
 import dev.jay.passgenius.view.screens.MemorablePasswordGenerateScreen
@@ -24,21 +26,30 @@ import dev.jay.passgenius.view.screens.SettingsScreen
 fun AppNavigationGraph(
     navHostController: NavHostController,
     innerPadding: PaddingValues,
+    window: Window,
     currentScreen: MutableState<String>,
     onBack: () -> Unit,
     showBottomBar: MutableState<Boolean>,
     showTopBar: MutableState<Boolean>,
     snackState: SnackbarHostState,
     onScreenChange: (String) -> Unit,
-    onNavigationHappens: (Int) -> Unit
+    onNavigationHappens: (Int) -> Unit,
+    activityKiller: () -> Unit
 ) {
-    NavHost(navController = navHostController, startDestination = Routes.HOME_SCREEN) {
+    NavHost(navController = navHostController, startDestination = Routes.AUTHENTICATION) {
+        composable(route = Routes.AUTHENTICATION) {
+            AuthenticationScreen(innerPadding = innerPadding, navController = navHostController, window = window)
+            currentScreen.value = Routes.AUTHENTICATION
+            showTopBar.value = false
+            showBottomBar.value = false
+        }
         composable(route = Routes.HOME_SCREEN) {
             HomeScreen(
                 innerPadding = innerPadding,
                 snackState = snackState,
                 navController = navHostController,
-                onPasswordsChange = { currentScreen -> onScreenChange(currentScreen) })
+                onPasswordsChange = { currentScreen -> onScreenChange(currentScreen) },
+                activityKiller = { activityKiller() })
             currentScreen.value = Routes.HOME_SCREEN
             showTopBar.value = true
             showBottomBar.value = true

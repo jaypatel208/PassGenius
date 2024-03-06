@@ -40,12 +40,14 @@ import androidx.navigation.NavController
 import dev.jay.passgenius.R
 import dev.jay.passgenius.di.models.PasswordStoreModel
 import dev.jay.passgenius.ui.components.CustomAnimatedVisibility
+import dev.jay.passgenius.ui.components.ExitAlertDialog
 import dev.jay.passgenius.ui.components.MetricsComponent
 import dev.jay.passgenius.ui.components.MorePasswordOptions
 import dev.jay.passgenius.ui.components.NoPasswordStoredComponent
 import dev.jay.passgenius.ui.components.PasswordsLazyColumn
 import dev.jay.passgenius.ui.components.ViewPasswordComponent
 import dev.jay.passgenius.ui.navigation.Routes
+import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.utils.GeneralUtility
 import dev.jay.passgenius.utils.PasswordUtility
 import dev.jay.passgenius.viewmodel.HomeScreenViewModel
@@ -56,7 +58,8 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     snackState: SnackbarHostState,
     navController: NavController,
-    onPasswordsChange: (String) -> Unit
+    onPasswordsChange: (String) -> Unit,
+    activityKiller: () -> Unit
 ) {
     var forceRecomposition by remember {
         mutableStateOf(0)
@@ -82,6 +85,7 @@ fun HomeScreen(
         mutableStateOf(PasswordStoreModel(id = 0, site = "", username = "", password = ""))
     }
     val density = LocalDensity.current
+    var openExitDialog by remember { mutableStateOf(false) }
     Box(contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier
@@ -106,6 +110,7 @@ fun HomeScreen(
             val totalPasswordsSize = homeScreenViewModel.totalPasswordsSize.value
             if (totalPasswordsSize > 0) {
                 onPasswordsChange(Routes.HOME_SCREEN)
+                GeneralUtility.SetStatusBarColor(color = OrangePrimary)
                 MetricsComponent(
                     totalPasswords = totalPasswordsSize.toString(),
                     strongPasswords = homeScreenViewModel.strongPasswords.size.toString(),
@@ -127,6 +132,7 @@ fun HomeScreen(
                 )
             } else {
                 onPasswordsChange(Routes.HOME_SCREEN_NO_PASS)
+                GeneralUtility.SetStatusBarColor(color = Color.White)
                 NoPasswordStoredComponent()
             }
         }
@@ -210,13 +216,18 @@ fun HomeScreen(
                 )
             }
         }
+        if (openExitDialog) {
+            ExitAlertDialog(cancel = { openExitDialog = false }) {
+                activityKiller()
+            }
+        }
     }
 
     BackHandler {
         if (itemClicked) {
             itemClicked = false
         } else {
-            navController.popBackStack()
+            openExitDialog = true
         }
     }
 }

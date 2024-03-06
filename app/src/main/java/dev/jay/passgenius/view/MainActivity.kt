@@ -1,7 +1,7 @@
 package dev.jay.passgenius.view
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import android.view.Window
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,12 +42,16 @@ import dev.jay.passgenius.ui.navigation.AppNavigationGraph
 import dev.jay.passgenius.ui.navigation.Routes
 import dev.jay.passgenius.ui.theme.OrangePrimary
 import dev.jay.passgenius.ui.theme.PassGeniusTheme
-import dev.jay.passgenius.utils.GeneralUtility
+import dev.jay.passgenius.utils.Constants
+import dev.jay.passgenius.utils.PreferencesManager
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val activityKiller: () -> Unit = {
+            this.finish()
+        }
         setContent {
             PassGeniusTheme {
                 val navController = rememberNavController()
@@ -56,6 +61,18 @@ class MainActivity : ComponentActivity() {
                 val snackState = remember { SnackbarHostState() }
                 val onBack: () -> Unit = {
                     navController.popBackStack()
+                }
+                val preferencesManager = remember { PreferencesManager(this) }
+                val authStatus = remember {
+                    mutableStateOf(
+                        preferencesManager.getData(Constants.Preferences.AUTH_STATUS, Constants.Preferences.DEFAULT_VAL)
+                    )
+                }
+                if (authStatus.value == Constants.Preferences.DEFAULT_VAL) {
+                    preferencesManager.saveData(
+                        key = Constants.Preferences.AUTH_STATUS,
+                        value = Constants.Preferences.AUTH_FALSE
+                    )
                 }
                 Surface(
                     modifier = Modifier
@@ -69,7 +86,6 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(0)
                     }
                     val topBarColor = if (screen == Routes.HOME_SCREEN) OrangePrimary else Color.White
-                    GeneralUtility.SetStatusBarColor(color = topBarColor)
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
@@ -143,13 +159,15 @@ class MainActivity : ComponentActivity() {
                         AppEntryPoint(
                             navController,
                             innerPadding,
+                            this.window,
                             currentScreen,
                             onBack,
                             showBottomBar,
                             showTopBar,
                             snackState,
                             onScreenChange = { screen = it },
-                            onNavigationHappens = { selectedItemIndex = it }
+                            onNavigationHappens = { selectedItemIndex = it },
+                            activityKiller = { activityKiller() }
                         )
                     }
                 }
@@ -161,23 +179,27 @@ class MainActivity : ComponentActivity() {
     private fun AppEntryPoint(
         navHostController: NavHostController,
         innerPadding: PaddingValues,
+        window: Window,
         currentScreen: MutableState<String>,
         onBack: () -> Unit,
         showBottomBar: MutableState<Boolean>,
         showTopBar: MutableState<Boolean>,
         snackState: SnackbarHostState,
         onScreenChange: (String) -> Unit,
-        onNavigationHappens: (Int) -> Unit
+        onNavigationHappens: (Int) -> Unit,
+        activityKiller: () -> Unit
     ) {
         AppNavigationGraph(
             navHostController,
             innerPadding,
+            window,
             currentScreen,
             onBack,
             showBottomBar,
             showTopBar,
             snackState,
             onScreenChange = { givenScreen -> onScreenChange(givenScreen) },
-            onNavigationHappens = { onNavigationHappens(it) })
+            onNavigationHappens = { onNavigationHappens(it) },
+            activityKiller = { activityKiller() })
     }
 }
